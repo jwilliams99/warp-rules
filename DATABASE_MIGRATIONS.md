@@ -1,4 +1,4 @@
-## Rule: Always Use Migrations for Database Work (Project Kickoff)
+## Rule: Always Use Migrations for Database Work
 
 When kicking off a project that touches a database, you MUST use an ORM and a migration tool from day one.
 
