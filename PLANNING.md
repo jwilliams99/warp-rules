@@ -67,15 +67,28 @@ Core principle:
 - Reuse over reinvention.
 - Preserve existing contracts unless change is explicit, justified, and system-wide consistent.
 
+Pre-implementation gates (mandatory before a phase may move to 🟡 In Progress):
+
+- Every plan must include a filled-in "Pre-implementation gates" block. Sections are proportionate to scope: trivial changes may be one-liners; larger changes must be complete.
+- Prior-art and reuse check (always required):
+  - Existing functions / modules / services that already solve part of the problem (list paths and what will be reused).
+  - Existing abstractions or patterns this plan will extend.
+  - New abstractions being introduced (requires justification: why existing options are insufficient, why extension is not appropriate, how consistency will be preserved).
+  - Cross-surface equivalents checked (API, workers, frontend, tests): yes / no.
+  - For shared/canonical logic, follow `CENTRALISED_BUSINSS_LOGIC.md`.
+- Threat model (required whenever the plan touches authentication, authorisation, user data, external surfaces, secrets, infra, or dependency supply chain; otherwise state "n/a, reasoning"):
+  - Assets at risk.
+  - Trust boundaries crossed.
+  - New attack surfaces introduced.
+  - Mitigations (linked to controls in `SECURITY_BY_DEFAULT.md`).
+  - Explicitly out of scope.
+- A phase must not transition from 🔵 Not Started to 🟡 In Progress until both sub-sections above are filled or explicitly marked n/a with reasoning.
+
 Consistency and codebase conformity:
 
-- Plans must conform to the existing codebase unless there is a clear, explicit reason not to.
-- Existing contracts, patterns, naming, layering, and behavioural conventions must be reviewed before proposing new design.
-- Do not create duplicate abstractions, parallel workflows, overlapping rules, or competing sources of truth.
-- Prefer reuse, extension, or refactoring of existing patterns over invention of new ones.
-- If a plan introduces a new pattern, it must explicitly justify:
-  - why the current codebase pattern is insufficient
-  - why extension is not appropriate
-  - how consistency with the rest of the system will be preserved
-- Plans must identify the existing contracts, invariants, and behavioural expectations that the change must preserve.
-- Cross-surface changes must remain aligned: API, MCP, schemas, services, workers, docs, and operational guidance should not drift.
+- Plans must conform to the existing codebase. The canonical rules for conformity, refactoring scope, and readability live in `CODEBASE_ALIGNMENT_POLICY.md` and apply to plans as well as implementation.
+- In addition, plans specifically must:
+  - identify the existing contracts, invariants, and behavioural expectations that the change must preserve
+  - keep cross-surface changes aligned: API, MCP, schemas, services, workers, docs, and operational guidance should not drift
+  - if a new pattern is introduced, explicitly justify why the current pattern is insufficient, why extension is not appropriate, and how consistency will be preserved
+- For shared/canonical business logic specifically, defer to `CENTRALISED_BUSINSS_LOGIC.md`.

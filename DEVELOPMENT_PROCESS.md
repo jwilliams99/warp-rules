@@ -29,6 +29,7 @@
 
 ### Phase execution rules
 - Before starting a phase:
+  - verify pre-implementation gates are filled in the plan (see `PLANNING.md`)
   - update the plan phase status to `🟡 In Progress`
   - create the phase branch from the canonical branch
   - ensure the branch scope matches the phase scope
@@ -66,11 +67,46 @@
 - What is included
 - What is intentionally not included
 
+## Pre-implementation gates (verified before work began)
+Confirm that both gates were completed in the plan before the phase branch
+was created. Do not mark n/a without providing explicit reasoning.
+
+- Prior-art and reuse check:
+  - [ ] Completed — list reused paths or new abstractions introduced
+  - [ ] n/a — state which surfaces were checked and why none applied
+- Threat model:
+  - [ ] Completed — link to the filled threat model in the plan
+  - [ ] n/a — state which security-relevant surfaces were checked and
+        confirmed not to be touched by this phase (auth, authz, user data,
+        external surfaces, secrets, infra, supply chain)
+
+If either gate was not completed before work began, state that explicitly
+and do not check the box. A reviewer must not approve a PR where gates
+were skipped or filled after implementation started.
+
 ## Changes
 - Summary of the code, schema, contract, or documentation changes
 
+## Reuse and alignment
+- Existing functions / modules reused (paths)
+- New abstractions introduced, with justification (link plan's Prior-art section)
+- Duplication scan result (tool, findings, allowlist deltas)
+- Nearest relevant files consulted for style and alignment
+
+## Hygiene
+- Dead code / unused imports removed in touched files: yes / no / n-a
+- New TODO / FIXME comments link to tickets: yes / no / n-a
+- Docs / README / docstrings updated: yes / no / n-a
+- Complexity, file-size, and coverage budgets respected: yes / no / n-a
+
+## Security
+- Security-relevant surfaces touched (auth, authz, data egress, secrets, infra, deps): yes / no
+- Threat model updated (link plan's Threat model section) if the answer above is yes
+- CI security gates green (see `CI_GATES.md`): secrets scan, SAST, dep vuln scan
+- Least-privilege review performed for any new IAM / DB grants / tokens: yes / no / n-a
+
 ## Validation
-- Tests run
+- Tests run (unit, integration, security, authz)
 - Manual verification performed
 
 ## Contract impact
@@ -83,3 +119,31 @@
 ## Plan conformance
 - Confirm whether implementation matches the approved plan exactly
 - If not, describe the deviation explicitly
+```
+
+### Definition of Done (applies to every phase)
+A phase is not complete until every applicable item below is satisfied. Items
+marked n/a must state why.
+
+- Pre-implementation gates were completed and recorded in the plan before work
+  began: prior-art and reuse check, and threat model (or explicit n/a with
+  reasoning). A reviewer must verify both were filled before the phase branch
+  was created, not retrofitted during PR preparation.
+- Tests pass: unit, integration, and any security/authz tests required by the
+  plan or by `SECURITY_BY_DEFAULT.md`.
+- Lint, type, and format checks clean, per `STANDARD_TOOLING.md`.
+- CI security gates green (see `CI_GATES.md`): secrets scan, SAST, dependency
+  vulnerability scan.
+- CI hygiene gates green (see `CI_GATES.md`): duplication scan, complexity and
+  size budgets, coverage delta non-negative.
+- Prior-art and reuse check from the plan is satisfied; no new duplicate
+  abstractions introduced (see `CENTRALISED_BUSINSS_LOGIC.md`).
+- Alignment with the surrounding codebase verified, per
+  `CODEBASE_ALIGNMENT_POLICY.md`.
+- Documentation updated where required (README, API docs, docstrings, ADR or
+  changelog if applicable), per `PERIODIC_CODEBASE_HYGEINE_REVIEW.md`.
+- Threat model updated if any security-relevant surface changed; least-privilege
+  review complete for new grants or tokens.
+- Migrations, if any, satisfy the Definition of Done in `DATABASE_MIGRATIONS.md`.
+- Plan phase status reflects reality (see `PLANNING.md`); PR description follows
+  the template above.
