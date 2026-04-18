@@ -1,10 +1,8 @@
 ## Rule: Periodic codebase hygiene review
 
-•  Priority: HIGH
-•  Importance: HIGH
-•  Never Ignore: true
-•  Description:
-  Perform regular code hygiene reviews to eliminate waste, reduce risk, and maintain a clean, navigable codebase. This complements the canonical-function rule by catching broader decay.
+Perform regular code hygiene reviews to eliminate waste, reduce risk, and
+maintain a clean, navigable codebase. This complements the
+canonical-function rule by catching broader decay.
 
 ### Why
 Codebases accumulate cruft over time — dead code, stale comments, unused dependencies, outdated documentation, and latent bugs. Without periodic review, these compound into slower development, harder onboarding, and hidden security risks.
@@ -51,20 +49,21 @@ Codebases accumulate cruft over time — dead code, stale comments, unused depen
    •  No bare/blanket exception catches without logging or re-raising.
    •  Ensure errors propagate meaningful context.
 
-10. **Dependency health**
-    •  Check for known CVEs (e.g., npm audit, pip-audit, govulncheck).
-    •  Update deps that are >1 major version behind.
-    •  Ensure all deps are pinned for reproducible builds.
+10. **Dependency health** — see `CI_GATES.md` and `SECURITY_BY_DEFAULT.md`
+    for the authoritative rules on dependency scanning, CVE SLAs, version
+    drift, lockfile pinning, and SBOM generation. This hygiene review
+    confirms those controls are active; it does not restate the tooling.
 
 11. **Test hygiene**
     •  Remove or fix permanently skipped tests.
     •  Flag tests with no assertions.
     •  Investigate and fix flaky tests.
 
-12. **Security surface**
-    •  Scan for hardcoded secrets, tokens, or credentials.
-    •  Verify input validation on all public endpoints.
-    •  Review permissions and scopes for least-privilege.
+12. **Security surface** — see `SECURITY_BY_DEFAULT.md` for input
+    validation, least-privilege, authorisation tests, and security gates,
+    and `SECRETS_AND_CREDENTIALS_HANDLING.md` for secrets handling. This
+    hygiene review confirms those controls are active and not silently
+    weakened; it does not restate the rules.
 
 13. **Unused config & environment variables**
     •  Remove env vars and config keys that no code path references.
@@ -113,6 +112,8 @@ Each review should produce:
 •  Is documentation updated to reflect any removals or changes?
 
 ### Enforcement
-•  mandatory
-•  Applies to: all repositories with active development
-•  Owner: rotating among team members each cycle
+- Applies to: all repositories with active development.
+- Consequence on breach: the cycle owner files findings as tickets;
+  critical items must be addressed before the next release. A release
+  containing unresolved critical findings must not ship.
+- Owner: rotating among team members each cycle.

@@ -1,12 +1,8 @@
-## Rule: Test-Driven Development
+## Rule: Test-driven development
 
-- Priority: HIGH
-- Importance: HIGH
-- Never Ignore: true
-- Description:
-  TDD is the default development approach. Tests are written before
-  implementation. No work is complete without test coverage or an explicit
-  documented exception.
+TDD is the default development approach. Tests are written before
+implementation. No work is complete without test coverage or an explicit
+documented exception.
 
 ### Why
 Tests written after implementation tend to confirm the implementation rather
@@ -32,9 +28,16 @@ that behaviour exists.
 ### TDD red-first commits
 
 When recording a TDD red-first commit (a failing test as the starting point
-of a cycle), the commit message must mark it explicitly:
+of a cycle), follow the full conventional-commit format in
+`MANDATORY_CONVENTIONAL_COMMITS.md` with the `[tdd-red]` marker on the
+subject line:
 
-  test: add failing test for <behaviour> [tdd-red]
+```
+test(auth): add failing test for negative authz [tdd-red]
+- added test asserting 403 for unauthorised principal
+- aligned with scope-leak expectations in SECURITY_BY_DEFAULT.md
+NO-TICKET
+```
 
 A red-first commit must be followed by a green commit in the same session.
 Do not leave a red-first commit as the last commit on a branch.
@@ -135,8 +138,10 @@ No work is complete until:
 ---
 
 ### Enforcement
-- Mandatory.
-- Applies to: all implementation phases across all repositories with active
-  development.
-- Exception path requires explicit documentation. Undocumented absence of tests
-  is not an exception — it is non-compliance.
+- Applies to: all implementation phases across all repositories with
+  active development.
+- Consequence on breach: the CI test and coverage gates defined in
+  `CI_GATES.md` fail; a reviewer must block a PR that ships without the
+  required test categories or without documented TDD-exception
+  reasoning. Undocumented absence of tests is not an exception; it is
+  non-compliance.

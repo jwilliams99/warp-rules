@@ -1,10 +1,8 @@
 ## Rule: CI gates (required checks)
 
-•  Priority: HIGH
-•  Importance: HIGH
-•  Never Ignore: true
-•  Description:
-  Every repository with active development must run a defined set of automated checks in CI. This rule is the single authoritative list of required gates; other rules reference it rather than redefining their own.
+Every repository with active development must run a defined set of
+automated checks in CI. This rule is the single authoritative list of
+required gates; other rules reference it rather than redefining their own.
 
 ### Why
 Humans are not a reliable enforcement mechanism for security and hygiene. Gates that run on every commit, PR, and build are. Centralising the list here prevents drift between repos and between rules.
@@ -44,7 +42,7 @@ Every repo must run the gates below, using the named tool for the stack in use. 
    •  Default: `jscpd` (polyglot).
    •  Per-stack alternatives: Python `pylint --enable=duplicate-code`; JS/TS `eslint` `sonarjs/no-duplicate-string` and `sonarjs/no-identical-functions`; Go `dupl`; Java/Kotlin `PMD-CPD`.
    •  Behaviour: blocking above the repo's documented threshold (for example `min-tokens: 50`, max duplication `5%`). Allowlist entries require justification.
-   •  References: `CENTRALISED_BUSINSS_LOGIC.md`, `CODEBASE_ALIGNMENT_POLICY.md`.
+   •  References: `CENTRALISED_BUSINESS_LOGIC.md`, `CODEBASE_ALIGNMENT_POLICY.md`.
 
 7. Complexity and size budgets
    •  Tools: `radon` (Python), ESLint `complexity` rule (JS/TS), `gocyclo` (Go).
@@ -61,7 +59,7 @@ Every repo must run the gates below, using the named tool for the stack in use. 
 10. Hygiene checks
     •  Unused imports and dead code: `vulture`, `ts-prune`, language-server "unused" diagnostics, `knip`.
     •  Unused dependencies: `depcheck`, `pip-audit --strict`, `go mod tidy` diff check.
-    •  TODO freshness: CI check fails if a TODO has no ticket reference or is older than the policy window (see `PERIODIC_CODEBASE_HYGEINE_REVIEW.md`).
+    •  TODO freshness: CI check fails if a TODO has no ticket reference or is older than the policy window (see `PERIODIC_CODEBASE_HYGIENE_REVIEW.md`).
     •  `.env.example` vs code reference drift.
 
 ### Supply-chain gates (at build / release time)
@@ -88,13 +86,39 @@ Each repository should publish, at minimum:
 •  Count of TODOs without tickets.
 
 ### Enforcement
-•  Mandatory for all repositories with active development.
-•  Owners: the hygiene and security owners on the current rotation, per `PERIODIC_CODEBASE_HYGEINE_REVIEW.md` and `SECURITY_BY_DEFAULT.md`.
+- Applies to: every repository with active development.
+- Consequence on breach: any failing required gate blocks the PR from
+  merging and blocks the deployment pipeline. Missing gates in a repo are
+  themselves a defect and must be added on the next change.
+- Owners: the hygiene and security owners on the current rotation, per
+  `PERIODIC_CODEBASE_HYGIENE_REVIEW.md` and `SECURITY_BY_DEFAULT.md`.
+
+### Mapping to the global Definition of Done
+Each CI gate in this file satisfies one or more bullets in the Definition
+of Done in `DEVELOPMENT_PROCESS.md`. This mapping is the source of truth;
+if the DoD or this file changes, update the other in the same change set.
+
+- Secrets scanning → DoD: CI security gates green; no secrets committed.
+- SAST → DoD: CI security gates green.
+- Dependency vulnerability scanning → DoD: CI security gates green;
+  dependency SLA met.
+- IaC / container scanning → DoD: CI security gates green (where
+  applicable).
+- Lint, format, type → DoD: lint, type, and format checks clean.
+- Duplication scan → DoD: CI hygiene gates green; no new duplicate
+  abstractions.
+- Complexity and size budgets → DoD: CI hygiene gates green.
+- Test and coverage → DoD: tests pass; coverage delta non-negative.
+- Migration checks → DoD: migrations satisfy `DATABASE_MIGRATIONS.md` DoD.
+- Hygiene checks → DoD: documentation updated; TODO freshness respected.
 
 ### Related canonical rules
-•  `SECURITY_BY_DEFAULT.md` — defines what must be gated and why.
-•  `SECRETS_AND_CREDENTIALS_HANDLING.md` — authoritative rule for secrets handling.
-•  `PERIODIC_CODEBASE_HYGEINE_REVIEW.md` — broader hygiene checklist; this rule automates the parts that can be automated.
-•  `DATABASE_MIGRATIONS.md` — migration CI expectations.
-•  `STANDARD_TOOLING.md` — lint, format, and type tooling per language.
-•  `DEVELOPMENT_PROCESS.md` — Definition of Done references every gate in this file.
+- `SECURITY_BY_DEFAULT.md` — defines what must be gated and why.
+- `SECRETS_AND_CREDENTIALS_HANDLING.md` — authoritative rule for secrets
+  handling.
+- `PERIODIC_CODEBASE_HYGIENE_REVIEW.md` — broader hygiene checklist; this
+  rule automates the parts that can be automated.
+- `DATABASE_MIGRATIONS.md` — migration CI expectations.
+- `STANDARD_TOOLING.md` — lint, format, and type tooling per language.
+- `DEVELOPMENT_PROCESS.md` — the global Definition of Done; every gate in
+  this file maps to one or more DoD bullets (see mapping above).

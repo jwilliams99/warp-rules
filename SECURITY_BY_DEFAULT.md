@@ -1,10 +1,9 @@
-•  Priority: CRITICAL
-•  Importance: EXTREME
-•  Never Ignore: true
-•  Description:
-  Security must be designed into systems from inception, not bolted on afterward.
-•  Enforcement: security gates are required at every stage of the lifecycle (see "Security gates" below), not only before deployment.
-•  Philosophy: security is not a feature, it is a foundational requirement.
+## Rule: Security by default
+
+Security must be designed into systems from inception, not bolted on
+afterward. Security gates are required at every stage of the lifecycle
+(see "Security gates" below), not only before deployment. Security is
+not a feature; it is a foundational requirement.
 
 Approach
 
@@ -12,7 +11,7 @@ Existing Systems:
 
 •  Step 1: understand current security mechanisms.
 •  Step 2: document existing patterns and infrastructure.
-•  Step 3: reuse and extend existing security controls (per `CENTRALISED_BUSINSS_LOGIC.md`).
+•  Step 3: reuse and extend existing security controls (per `CENTRALISED_BUSINESS_LOGIC.md`).
 •  Step 4: maintain consistency with established patterns (per `CODEBASE_ALIGNMENT_POLICY.md`).
 •  Rationale: leverage existing, tested security infrastructure; avoid fragmentation.
 
@@ -73,11 +72,10 @@ Least privilege:
 
 Secrets management:
 
-•  The authoritative rule for handling and avoiding secret leakage is `SECRETS_AND_CREDENTIALS_HANDLING.md`.
-•  Named secrets manager: every project must declare its canonical secrets backend in its README (for example Vault, AWS Secrets Manager, Google Secret Manager, Doppler, 1Password). Plaintext secrets in config files are prohibited.
-•  Detection tooling (pre-commit and CI) is defined in `CI_GATES.md`.
-•  Rotation policy: API keys, service-account keys, and long-lived tokens must have a documented maximum age and an owner.
-•  Incident playbook: on detection — rotate, revoke, audit access, patch, post-mortem. A secret committed to history must be treated as compromised even after removal.
+- The authoritative rule for secrets handling, detection, rotation, and the
+  incident playbook is `SECRETS_AND_CREDENTIALS_HANDLING.md`. This rule
+  does not restate that content; it only affirms that secrets controls are
+  part of security-by-default.
 
 Secure-by-default scaffolding:
 
@@ -91,7 +89,7 @@ Security tests (first-class tests):
 ◦  A negative authorisation test (forbidden principal is denied with the correct status code).
 ◦  A scope-leak test (results contain only the requesting principal's data; no cross-tenant bleed).
 ◦  A rate-limit or abuse test where applicable.
-•  Follow TDD per `TEST_DRIVEN_DEVELOPEMNT.md`: write the negative test first.
+•  Follow TDD per `TEST_DRIVEN_DEVELOPMENT.md`: write the negative test first.
 •  These tests are part of the Definition of Done in `DEVELOPMENT_PROCESS.md`.
 
 Dependency and supply-chain hygiene:
@@ -108,8 +106,19 @@ Incident feedback loop:
 
 Related canonical rules:
 
-•  `SECRETS_AND_CREDENTIALS_HANDLING.md` — authoritative rule for secrets.
-•  `CI_GATES.md` — authoritative list of required CI checks and tooling per stack.
-•  `PLANNING.md` — Threat model section (Pre-implementation gates).
-•  `DEVELOPMENT_PROCESS.md` — Security section of the PR template and Definition of Done.
-•  `TEST_DRIVEN_DEVELOPEMNT.md` — expectations for authorisation and scope-leak tests.
+- `SECRETS_AND_CREDENTIALS_HANDLING.md` — authoritative rule for secrets.
+- `CI_GATES.md` — authoritative list of required CI checks and tooling
+  per stack.
+- `PLANNING.md` — Threat model section (Pre-implementation gates).
+- `DEVELOPMENT_PROCESS.md` — Security section of the PR template and
+  Definition of Done.
+- `TEST_DRIVEN_DEVELOPMENT.md` — expectations for authorisation and
+  scope-leak tests.
+
+### Enforcement
+- Applies to: every system, every change that touches a
+  security-relevant surface, every deployment.
+- Consequence on breach: the required CI security gates (`CI_GATES.md`)
+  block the PR from merging; a reviewer must block a PR that touches a
+  security-relevant surface without an updated threat model; any control
+  gap identified by a security review blocks deployment until closed.

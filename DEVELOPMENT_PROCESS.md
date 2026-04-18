@@ -67,23 +67,6 @@
 - What is included
 - What is intentionally not included
 
-## Pre-implementation gates (verified before work began)
-Confirm that both gates were completed in the plan before the phase branch
-was created. Do not mark n/a without providing explicit reasoning.
-
-- Prior-art and reuse check:
-  - [ ] Completed — list reused paths or new abstractions introduced
-  - [ ] n/a — state which surfaces were checked and why none applied
-- Threat model:
-  - [ ] Completed — link to the filled threat model in the plan
-  - [ ] n/a — state which security-relevant surfaces were checked and
-        confirmed not to be touched by this phase (auth, authz, user data,
-        external surfaces, secrets, infra, supply chain)
-
-If either gate was not completed before work began, state that explicitly
-and do not check the box. A reviewer must not approve a PR where gates
-were skipped or filled after implementation started.
-
 ## Changes
 - Summary of the code, schema, contract, or documentation changes
 
@@ -99,11 +82,34 @@ were skipped or filled after implementation started.
 - Docs / README / docstrings updated: yes / no / n-a
 - Complexity, file-size, and coverage budgets respected: yes / no / n-a
 
-## Security
-- Security-relevant surfaces touched (auth, authz, data egress, secrets, infra, deps): yes / no
-- Threat model updated (link plan's Threat model section) if the answer above is yes
-- CI security gates green (see `CI_GATES.md`): secrets scan, SAST, dep vuln scan
-- Least-privilege review performed for any new IAM / DB grants / tokens: yes / no / n-a
+## Gates
+Two-part gate: first that the Pre-implementation gates were filled in the
+plan before work began (per `PLANNING.md`), and second that the during-
+implementation updates have been reconciled.
+
+Pre-implementation gates (verified before the phase branch was created):
+- Prior-art and reuse check:
+  - [ ] Completed — plan section filled; see "Reuse and alignment" above
+  - [ ] n/a — state which surfaces were checked and why none applied
+- Threat model:
+  - [ ] Completed — link to the filled threat model in the plan
+  - [ ] n/a — state which security-relevant surfaces were checked and
+        confirmed not touched (auth, authz, user data, external surfaces,
+        secrets, infra, supply chain)
+
+If either gate was not completed before work began, state that explicitly
+and do not check the box. A reviewer must not approve a PR where gates
+were skipped or filled after implementation started.
+
+Security updates during implementation:
+- Security-relevant surfaces touched (auth, authz, data egress, secrets,
+  infra, deps): yes / no
+- Threat model updated (link plan's Threat model section) if the answer
+  above is yes
+- CI security gates green (see `CI_GATES.md`): secrets scan, SAST,
+  dependency vulnerability scan
+- Least-privilege review performed for any new IAM / DB grants / tokens:
+  yes / no / n-a
 
 ## Validation
 - Tests run (unit, integration, security, authz)
@@ -137,13 +143,22 @@ marked n/a must state why.
 - CI hygiene gates green (see `CI_GATES.md`): duplication scan, complexity and
   size budgets, coverage delta non-negative.
 - Prior-art and reuse check from the plan is satisfied; no new duplicate
-  abstractions introduced (see `CENTRALISED_BUSINSS_LOGIC.md`).
+  abstractions introduced (see `CENTRALISED_BUSINESS_LOGIC.md`).
 - Alignment with the surrounding codebase verified, per
   `CODEBASE_ALIGNMENT_POLICY.md`.
 - Documentation updated where required (README, API docs, docstrings, ADR or
-  changelog if applicable), per `PERIODIC_CODEBASE_HYGEINE_REVIEW.md`.
+  changelog if applicable), per `PERIODIC_CODEBASE_HYGIENE_REVIEW.md`.
 - Threat model updated if any security-relevant surface changed; least-privilege
   review complete for new grants or tokens.
 - Migrations, if any, satisfy the Definition of Done in `DATABASE_MIGRATIONS.md`.
 - Plan phase status reflects reality (see `PLANNING.md`); PR description follows
   the template above.
+
+### Enforcement
+- Applies to: every phase of every plan across every repository with
+  active development.
+- Consequence on breach: a reviewer must block any PR that violates the
+  phase, branch, or PR-template rules; a phase must not transition to
+  `🟡 In Progress` without the pre-implementation gates in `PLANNING.md`
+  filled; a phase must not be marked `🟢 Complete` while any applicable
+  Definition-of-Done item is unmet.

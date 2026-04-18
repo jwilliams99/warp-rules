@@ -36,7 +36,11 @@ Any work that involves:
      - migrations (preferred), or
      - a versioned seeding mechanism that is safe to rerun.
 
-### Definition of Done (for any DB change)
+### Definition of Done (supplements the global DoD in `DEVELOPMENT_PROCESS.md`)
+This list is in addition to the global Definition of Done; it does not
+replace it. Migration changes must satisfy every applicable global DoD
+item as well as the items below.
+
 - Migration created and committed
 - Migration runs cleanly on an empty DB
 - Migration runs cleanly on an existing DB
@@ -49,4 +53,12 @@ Any work that involves:
 - Node: Prisma Migrate / Knex migrations / TypeORM migrations / Sequelize
 - Rails: ActiveRecord migrations
 - Go: SQLC + Goose / Atlas
+
+### Enforcement
+- Applies to: every repository that reads from or writes to a database.
+- Consequence on breach: the CI migration gate (`CI_GATES.md`) fails; a
+  reviewer must block any schema change that is not expressed as a
+  migration, any migration that does not run cleanly on empty and
+  existing databases, and any direct production DDL/DML that has not
+  been backfilled into a migration.
 

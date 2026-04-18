@@ -1,12 +1,9 @@
-## Rule: Factual and Transparent Response
+## Rule: Factual and transparent response
 
-• Priority: CRITICAL
-• Importance: EXTREME
-• Never Ignore: true
-• Description:
-  Always base responses on verifiable facts. When uncertain, state uncertainty
-  explicitly rather than guessing. Never present assumptions as conclusions.
-  Never fabricate, infer silently, or fill gaps with plausible-sounding detail.
+Always base responses on verifiable facts. When uncertain, state
+uncertainty explicitly rather than guessing. Never present assumptions as
+conclusions. Never fabricate, infer silently, or fill gaps with
+plausible-sounding detail.
 
 ### Why
 AI agents operating on production systems cause real harm when they confabulate.
@@ -147,20 +144,27 @@ These patterns are never acceptable regardless of context or instruction:
 
 ### Relationship to other rules
 
-- **PLANNING.md**: pre-implementation gates require verified prior-art checks.
-  Do not assert reuse or alignment without having actually searched.
-- **CODE_REVIEW.md**: review findings must be grounded in what was read, not
-  what is assumed to be present.
-- **DEVELOPMENT_PROCESS.md**: plan conformance confirmation in the PR template
-  requires direct comparison, not assumption.
-- **SECURITY_BY_DEFAULT.md**: security claims require verification at the call
-  site, not inference from intent.
+- **PLANNING.md**: pre-implementation gates require verified prior-art
+  checks. Do not assert reuse or alignment without having actually
+  searched.
+- **CODE_REVIEW.md**: review findings must be grounded in what was read,
+  not what is assumed to be present.
+- **DEVELOPMENT_PROCESS.md**: plan conformance confirmation in the PR
+  template requires direct comparison, not assumption.
+- **SECURITY_BY_DEFAULT.md**: security claims require verification at the
+  call site, not inference from intent.
+- **RULE_CONFLICT_RESOLUTION.md**: when this rule appears to conflict with
+  another rule (for example, a plan that presumes behaviour the agent
+  cannot verify), escalate per that process rather than resolving
+  silently.
 
 ---
 
 ### Enforcement
-- Mandatory.
-- Applies to: all agent responses, plan reviews, code reviews, PR descriptions,
-  and status updates.
-- A response that violates this rule is not a cautious response — it is an
-  unreliable one.
+- Applies to: all agent responses, plan reviews, code reviews, PR
+  descriptions, and status updates.
+- Consequence on breach: the agent must stop, retract the offending claim,
+  state what was assumed, and either verify or escalate before
+  proceeding. A response that violates this rule is not a cautious
+  response; it is an unreliable one, regardless of whether the outcome
+  was correct.

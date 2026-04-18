@@ -1,11 +1,12 @@
 ## Code review rules
+
 This rule covers code-review concerns that are specific to reviewing a change in flight. Topics that are owned by other rules are linked below rather than restated, to keep a single source of truth.
 ### Canonical rules this rule defers to
 - Security and access control: see `SECURITY_BY_DEFAULT.md` and `SECRETS_AND_CREDENTIALS_HANDLING.md`.
-- Test coverage and TDD expectations: see `TEST_DRIVEN_DEVELOPEMNT.md`.
-- Code hygiene, dead code, TODO/FIXME, magic numbers, dependency health, documentation currency: see `PERIODIC_CODEBASE_HYGEINE_REVIEW.md`.
+- Test coverage and TDD expectations: see `TEST_DRIVEN_DEVELOPMENT.md`.
+- Code hygiene, dead code, TODO/FIXME, magic numbers, dependency health, documentation currency: see `PERIODIC_CODEBASE_HYGIENE_REVIEW.md`.
 - Migration reversibility, ORM usage, and DDL/DML discipline: see `DATABASE_MIGRATIONS.md`.
-- Shared/canonical business logic and single-source-of-truth: see `CENTRALISED_BUSINSS_LOGIC.md`.
+- Shared/canonical business logic and single-source-of-truth: see `CENTRALISED_BUSINESS_LOGIC.md`.
 - Codebase conformity, refactoring scope, and readability standard: see `CODEBASE_ALIGNMENT_POLICY.md`.
 - Planning conformance (phase status, plan-vs-implementation): see `PLANNING.md` and `DEVELOPMENT_PROCESS.md`.
 ### Correctness
@@ -43,7 +44,7 @@ This rule covers code-review concerns that are specific to reviewing a change in
 - Do not place raw SQL in route or transport handlers.
 - Do not place business-rule decisions in background jobs if they belong in shared services.
 ### Fallback chain implementation
-- For canonical-location and reuse expectations, defer to `CENTRALISED_BUSINSS_LOGIC.md`.
+- For canonical-location and reuse expectations, defer to `CENTRALISED_BUSINESS_LOGIC.md`.
 - Request-provided invalid values must be rejected where the contract says so.
 - Config-derived invalid values must be clamped, corrected, or warned exactly as specified.
 - `NULL`, missing-key, empty-string, and whitespace semantics must be handled consistently across the full chain.
@@ -59,11 +60,18 @@ This rule covers code-review concerns that are specific to reviewing a change in
 - Warnings must be informative enough for diagnosis without exposing internals.
 ### Duplication and alignment (reviewer must verify)
 - No function added duplicates an existing one: reviewer searches by name, signature, and behaviour before approving.
-- Shared logic lives in the canonical location per `CENTRALISED_BUSINSS_LOGIC.md`, not beside a single caller.
+- Shared logic lives in the canonical location per `CENTRALISED_BUSINESS_LOGIC.md`, not beside a single caller.
 - New module placement matches established patterns in the surrounding code.
 - Naming, error handling, and layering match the nearest relevant files per `CODEBASE_ALIGNMENT_POLICY.md`.
 - If a new abstraction is introduced, the plan's "Pre-implementation gates → Prior-art and reuse check" section justifies it.
 - The PR's "Reuse and alignment" section is complete and the duplication-scan result is attached (see `CI_GATES.md`).
 ### TODO discipline at review time
-- TODO/FIXME/HACK comments are only acceptable if they link to a tracked ticket, in line with `PERIODIC_CODEBASE_HYGEINE_REVIEW.md`.
+- TODO/FIXME/HACK comments are only acceptable if they link to a tracked ticket, in line with `PERIODIC_CODEBASE_HYGIENE_REVIEW.md`.
 - TODOs that represent unresolved design decisions must be resolved before the change is approved, not deferred via a ticket.
+
+### Enforcement
+- Applies to: every PR under review.
+- Consequence on breach: a reviewer must withhold approval and request
+  changes until every concern listed above is resolved or explicitly
+  justified. Approving a PR with unresolved items is itself a review
+  defect.

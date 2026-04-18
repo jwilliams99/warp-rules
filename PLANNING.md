@@ -1,5 +1,9 @@
-Planning document requirements:
+## Rule: Planning document requirements
 
+Every plan follows a single structure so that status, gates, and
+conformance can be checked uniformly across plans.
+
+### Planning document requirements
 - Every plan must begin with:
   - Created: YYYY-MM-DD HH:MM
   - Completed: Not completed
@@ -23,7 +27,7 @@ Phase status rules:
 - When a phase finishes successfully, update it immediately to 🟢 Complete.
 - When a phase cannot proceed or has irrecoverable issues, update it immediately to 🔴 Failed.
 - Use 🟣 Other only when the state does not fit the predefined categories, and state the specific condition clearly.
-- A phase must never remain 🔵 Not Started once work has begun.
+- A phase must never remain 🔵 Not Started once work has begun. The gating condition for the transition to 🟡 In Progress is defined in the "Pre-implementation gates" section below; work must not begin until those gates are filled.
 - Status must reflect reality, not optimism.
 
 Step-level tracking:
@@ -75,7 +79,7 @@ Pre-implementation gates (mandatory before a phase may move to 🟡 In Progress)
   - Existing abstractions or patterns this plan will extend.
   - New abstractions being introduced (requires justification: why existing options are insufficient, why extension is not appropriate, how consistency will be preserved).
   - Cross-surface equivalents checked (API, workers, frontend, tests): yes / no.
-  - For shared/canonical logic, follow `CENTRALISED_BUSINSS_LOGIC.md`.
+  - For shared/canonical logic, follow `CENTRALISED_BUSINESS_LOGIC.md`.
 - Threat model (required whenever the plan touches authentication, authorisation, user data, external surfaces, secrets, infra, or dependency supply chain; otherwise state "n/a, reasoning"):
   - Assets at risk.
   - Trust boundaries crossed.
@@ -91,4 +95,12 @@ Consistency and codebase conformity:
   - identify the existing contracts, invariants, and behavioural expectations that the change must preserve
   - keep cross-surface changes aligned: API, MCP, schemas, services, workers, docs, and operational guidance should not drift
   - if a new pattern is introduced, explicitly justify why the current pattern is insufficient, why extension is not appropriate, and how consistency will be preserved
-- For shared/canonical business logic specifically, defer to `CENTRALISED_BUSINSS_LOGIC.md`.
+- For shared/canonical business logic specifically, defer to `CENTRALISED_BUSINESS_LOGIC.md`.
+
+### Enforcement
+- Applies to: every plan that gates any non-trivial change.
+- Consequence on breach: a phase must not transition from `🔵 Not
+  Started` to `🟡 In Progress` until the pre-implementation gates are
+  filled; a plan must not be marked complete until the `Completed` field
+  is set with the actual date and time; a reviewer must block any PR
+  whose plan does not meet these requirements.
