@@ -1,5 +1,8 @@
 ## Development process rules
 
+Development can only begin once the planning document is complete, has human approver and approval date
+recorded in the planning document. 
+
 ### Core workflow
 - Every approved plan must be executed through explicit development phases.
 - Work must proceed phase by phase unless parallelism is explicitly justified in the plan.
@@ -162,3 +165,4 @@ marked n/a must state why.
   `🟡 In Progress` without the pre-implementation gates in `PLANNING.md`
   filled; a phase must not be marked `🟢 Complete` while any applicable
   Definition-of-Done item is unmet.
+

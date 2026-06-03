@@ -7,6 +7,8 @@ conformance can be checked uniformly across plans.
 - Every plan must begin with:
   - Created: YYYY-MM-DD HH:MM TZ
   - Completed: Not completed
+  - Approved by: <human who approves>
+  - Approved date: <date when the approval happened>
 - Set Created when the plan is first written.
 - Leave Completed as Not completed until the plan is fully finished.
 - When the plan is complete, update Completed immediately with the actual date and time.
@@ -148,3 +150,4 @@ Completed-plan archival:
   must not transition status at all while the Warp Drive plan and its
   repo mirror(s) under `docs/ai-planning/` are out of sync; a reviewer
   must block any PR whose plan does not meet these requirements.
+
