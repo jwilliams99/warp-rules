@@ -56,9 +56,6 @@ item as well as the items below.
 
 ### Enforcement
 - Applies to: every repository that reads from or writes to a database.
-- Consequence on breach: the CI migration gate (`CI_GATES.md`) fails; a
-  reviewer must block any schema change that is not expressed as a
-  migration, any migration that does not run cleanly on empty and
-  existing databases, and any direct production DDL/DML that has not
-  been backfilled into a migration.
+- Consequence on breach: the CI migration gate (`CI_GATES.md`) fails;
+  reviewers must block schema changes without migrations.
 

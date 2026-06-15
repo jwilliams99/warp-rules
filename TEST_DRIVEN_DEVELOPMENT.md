@@ -29,8 +29,7 @@ that behaviour exists.
 
 When recording a TDD red-first commit (a failing test as the starting point
 of a cycle), follow the full conventional-commit format in
-`MANDATORY_CONVENTIONAL_COMMITS.md` with the `[tdd-red]` marker on the
-subject line:
+`COMMIT_DISCIPLINE.md` with the `[tdd-red]` marker on the subject line:
 
 ```
 test(auth): add failing test for negative authz [tdd-red]
@@ -126,14 +125,11 @@ No work is complete until:
 
 ### Relationship to other rules
 
-- **CI_GATES.md**: defines the CI test and coverage gates that enforce this rule
-  automatically.
+- **CI_GATES.md**: defines the CI test and coverage gates that enforce this rule.
 - **SECURITY_BY_DEFAULT.md**: defines security test expectations and the
   requirement to write negative authorisation tests first.
-- **DEVELOPMENT_PROCESS.md**: TDD compliance is part of the Definition of Done
-  for every phase; the PR template requires test results to be reported.
-- **PLANNING.md**: plans must identify which test categories are required for
-  each phase so expectations are set before implementation begins.
+- **DEVELOPMENT_PROCESS.md**: TDD compliance is part of the Definition of Done.
+- **PLANNING.md**: plans must identify which test categories are required.
 
 ---
 

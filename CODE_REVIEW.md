@@ -2,7 +2,7 @@
 
 This rule covers code-review concerns that are specific to reviewing a change in flight. Topics that are owned by other rules are linked below rather than restated, to keep a single source of truth.
 ### Canonical rules this rule defers to
-- Security and access control: see `SECURITY_BY_DEFAULT.md` and `SECRETS_AND_CREDENTIALS_HANDLING.md`.
+- Security and access control (including secrets handling): see `SECURITY_BY_DEFAULT.md`.
 - Test coverage and TDD expectations: see `TEST_DRIVEN_DEVELOPMENT.md`.
 - Code hygiene, dead code, TODO/FIXME, magic numbers, dependency health, documentation currency: see `PERIODIC_CODEBASE_HYGIENE_REVIEW.md`.
 - Migration reversibility, ORM usage, and DDL/DML discipline: see `DATABASE_MIGRATIONS.md`.
@@ -55,7 +55,7 @@ This rule covers code-review concerns that are specific to reviewing a change in
 - Do not introduce shared mutable state across requests or job executions.
 ### Observability
 - Every mutating operation must emit the event(s), logs, or metrics required by the plan.
-- Event metadata must never include secrets, raw API keys, passwords, or sensitive payloads (see `SECRETS_AND_CREDENTIALS_HANDLING.md`).
+- Event metadata must never include secrets, raw API keys, passwords, or sensitive payloads (see secrets section in `SECURITY_BY_DEFAULT.md`).
 - Emitted telemetry must support measurement of latency, partial-response rate, and dependency/source failure rate where required.
 - Warnings must be informative enough for diagnosis without exposing internals.
 ### Duplication and alignment (reviewer must verify)

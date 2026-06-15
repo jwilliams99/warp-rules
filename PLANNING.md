@@ -102,43 +102,29 @@ Consistency and codebase conformity:
 - For shared/canonical business logic specifically, defer to `CENTRALISED_BUSINESS_LOGIC.md`.
 
 ### Plan mirroring (Warp Drive ⇄ repo)
-Every plan must exist in two synchronised locations: the canonical Warp Drive plan document, and a mirrored Markdown file checked into each affected repository. The Warp Drive copy and the repo copy(ies) must be identical in content at every phase-status transition.
+Every plan must exist in two synchronised locations: the canonical Warp Drive plan document, and a mirrored Markdown file checked into each affected repository.
 
 Location and naming:
-
-- Mirror path: `docs/ai-planning/<snake_case_slug>.md`, relative to the root of each affected repository.
-- Slug: derive from the plan title, lower-case, ASCII only, words separated by underscores (snake_case). Example: plan title "Layered Context Loading" → `layered_context_loading.md`.
+- Mirror path: `docs/ai-planning/<snake_case_slug>.md` in each affected repo.
+- Slug: derived from the plan title, lower-case, ASCII only, words separated by underscores.
 - One file per plan. Do not date-prefix or version-suffix the filename; history is tracked via Git.
-
-Multi-repo plans:
-
-- If a plan affects more than one repository, a mirror must exist in every affected repository, at the same `docs/ai-planning/<snake_case_slug>.md` path in each.
-- The plan header must list every repository the plan is mirrored into (see "Header fields" below) so each mirror can locate the others.
-
-Header fields (in addition to `Created` and `Completed`):
-
-- `Warp Drive plan:` — identifies the canonical Warp Drive plan. The value should be the Warp Drive plan id when known (stable, unambiguous identifier); the plan title is acceptable when the id is not available, and the id should be added as soon as it is known. Both may be recorded together, for example `Warp Drive plan: <id> (<title>)`.
-- `Mirrors:` — a list of every repository path the plan is mirrored into, formatted as `<repo-name>:docs/ai-planning/<snake_case_slug>.md`. The Warp Drive copy must list the same set.
+- Multi-repo plans: mirror must exist in every affected repository at the same path.
+- Header fields: `Warp Drive plan:` (canonical plan identifier) and `Mirrors:` (list of repo paths).
 
 Sync timing (mandatory):
-
-- Every edit made to the Warp Drive plan must be mirrored to every affected repo as part of the same change-set. A phase must not transition status (🔵 → 🟡, 🟡 → 🟢, 🟡 → 🔴) until the repo mirror(s) reflect the Warp Drive content for that transition.
-- The mirror update must be committed (per `MANDATORY_CONVENTIONAL_COMMITS.md`) on the phase branch; if no phase branch yet exists, commit to the canonical branch via the normal PR flow.
-- Silent divergence between Warp Drive and the repo mirror(s) is a breach of this rule, regardless of which side is "right".
+- Every edit to the Warp Drive plan must be mirrored to every affected repo as part of the same change-set.
+- A phase must not transition status until the repo mirror(s) reflect the Warp Drive content for that transition.
+- Silent divergence between Warp Drive and the repo mirror(s) is a breach of this rule.
 
 Ownership and authority:
-
-- The Warp Drive plan is the human-facing canonical copy for discussion and status. The repo mirror is the machine-auditable copy for PR review, CI, and historical reference.
-- When the two diverge, stop and reconcile before further work; do not proceed on either copy until they match. See `RULE_CONFLICT_RESOLUTION.md` if reconciliation is non-obvious.
+- The Warp Drive plan is the human-facing canonical copy for discussion and status.
+- The repo mirror is the machine-auditable copy for PR review, CI, and historical reference.
+- When the two diverge, stop and reconcile before further work.
 
 Completed-plan archival:
-
-- Active plans live directly under `docs/ai-planning/` in every affected repository.
-- When a plan is marked complete (its `Completed` field is filled with the actual date and time, per the Planning document requirements above), the mirrored file must be moved from `docs/ai-planning/<snake_case_slug>.md` to `docs/ai-planning/complete/<snake_case_slug>.md` in every affected repository.
-- The move must happen in the same change-set that records the completion; a plan is not considered finalised until every mirror has been relocated to `complete/`.
-- Use `git mv` (or the equivalent) so history is preserved; do not delete-and-recreate.
-- Files under `docs/ai-planning/complete/` are immutable in practice: do not amend a completed plan in place. If a completed plan needs to be revisited, open a new plan that references the archived one.
-- The Warp Drive copy's status must stay consistent with the mirror location: if the mirror lives under `complete/`, the Warp Drive plan's `Completed` field must be set.
+- When a plan is marked complete (its `Completed` field filled with actual date and time), the mirrored file must be moved from `docs/ai-planning/<snake_case_slug>.md` to `docs/ai-planning/complete/<snake_case_slug>.md` in every affected repository.
+- Use `git mv` so history is preserved. Files under `complete/` are immutable.
+- The Warp Drive copy's `Completed` field must stay consistent with the mirror location.
 
 ### Enforcement
 - Applies to: every plan that gates any non-trivial change.

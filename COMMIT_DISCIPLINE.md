@@ -1,4 +1,90 @@
-## Rule: Auto-commit changes in git repos (with batching)
+## Rule: Commit discipline
+
+All Git commits must follow a single conventional-commit format so history
+is machine-parseable, human-readable, and traceable to tickets.
+
+### Why
+A consistent commit format makes history usable: reviewers can read a diff's
+intent quickly, tools can generate changelogs and release notes, and audits
+can trace a change from a ticket to the lines that implemented it.
+
+### Format
+Every commit message has four parts, in order:
+
+```
+type(scope): description
+- factual change 1
+- factual change 2
+- factual change 3
+TICKET-NUMBER
+```
+
+- **Subject line**: `type(scope): description`, imperative mood, no trailing
+  period. Scope is optional when the change is project-wide.
+- **Factual bullet points**: each bullet states exactly what changed, in
+  terms a reviewer can verify against the diff. No marketing copy.
+- **Trailer line**: a ticket identifier on the last line (for example
+  `ENG-338`). If there is genuinely no associated ticket, use `NO-TICKET`.
+  Do not invent identifiers.
+
+### Allowed types
+- `feat` — new user-visible behaviour
+- `fix` — corrects a defect
+- `docs` — documentation only
+- `style` — formatting, whitespace, or other cosmetic changes with no
+  behavioural effect
+- `refactor` — behaviour-preserving restructuring
+- `test` — tests only
+- `chore` — tooling, build, CI, housekeeping
+
+### Example
+```
+feat(logging): add user_id to log format string
+- added [user:%(user_id)s] to defaults.yaml format string
+- updated fallback format in __init__.py
+- modified auth endpoints to use get_log_context()
+ENG-338
+```
+
+### TDD red-first commits
+When recording a failing test as the starting point of a TDD cycle, the
+subject line must include the `[tdd-red]` marker:
+
+```
+test(auth): add failing test for negative authz [tdd-red]
+- added test asserting 403 for unauthorised principal
+- aligned with scope-leak expectations in SECURITY_BY_DEFAULT.md
+NO-TICKET
+```
+
+A red-first commit must be followed by a green commit in the same session.
+Do not leave a red-first commit as the last commit on a branch. See
+`TEST_DRIVEN_DEVELOPMENT.md`.
+
+### WIP commits
+When the user has explicitly asked for a work-in-progress commit, include
+the `[wip]` marker on the subject line:
+
+```
+chore(indexer): snapshot partial progress on ingestion refactor [wip]
+- extracted candidate normalisation helper
+- retrieval path still failing integration tests
+NO-TICKET
+```
+
+WIP commits must be rebased, squashed, or removed before the phase branch
+is merged, per `DEVELOPMENT_PROCESS.md`.
+
+### Enforcement
+- Applies to: every commit on every branch.
+- Consequence on breach: where a commit-message linter is configured in
+  CI, the CI run fails. In every repository, a reviewer must request a
+  rewrite of any commit message that does not follow this format before
+  the PR is merged.
+
+---
+
+## Auto-commit rules
 
 When working inside a Git repository, the agent should keep the repo tidy by
 committing work automatically — but only when it makes sense.
@@ -14,7 +100,7 @@ Auto-commit is allowed when ALL of these are true:
 - Changes are non-destructive (no mass deletions, no sweeping refactors).
 - The changes are coherent (one idea / one fix / one feature) and stay
   within the phase scope defined in the plan.
-- No secrets were introduced (see `SECRETS_AND_CREDENTIALS_HANDLING.md`).
+- No secrets were introduced (see secrets section in `SECURITY_BY_DEFAULT.md`).
 
 ### When NOT to auto-commit
 Do NOT auto-commit if any of these are true:
@@ -23,16 +109,14 @@ Do NOT auto-commit if any of these are true:
   only, renames only) unless it is part of a larger coherent change.
 - There are failing tests, failing lint, or the build is broken — with two
   explicit exceptions:
-  - the user explicitly asked for a WIP commit (use the `[wip]` marker per
-    `MANDATORY_CONVENTIONAL_COMMITS.md`), OR
+  - the user explicitly asked for a WIP commit (use the `[wip]` marker), OR
   - a TDD red-first commit is being recorded as the starting point of a
-    TDD cycle (use the `[tdd-red]` marker per
-    `MANDATORY_CONVENTIONAL_COMMITS.md` and `TEST_DRIVEN_DEVELOPMENT.md`),
-    and it must be followed by a green commit in the same session.
+    TDD cycle (use the `[tdd-red]` marker), and it must be followed by a
+    green commit in the same session.
 - The change touches production infra or security-sensitive code (ask first).
 - The change mixes unrelated concerns into the phase branch.
 - The change includes secrets or looks like credentials (stop and fix
-  immediately; see `SECRETS_AND_CREDENTIALS_HANDLING.md`).
+  immediately).
 
 ### Batching rule (avoid commit spam)
 Batch small edits together. The agent should accumulate "tiny" changes and
@@ -58,18 +142,6 @@ Before committing, the agent MUST:
    - `make test` / `make lint` / `npm test` / `pytest -q` / etc.
    - If no checks exist, at least ensure changes are syntactically valid.
 4. Ensure no secrets are present (scan the diff for tokens/keys).
-
-### Commit style
-- The authoritative commit-message format is defined in
-  `MANDATORY_CONVENTIONAL_COMMITS.md` (`type(scope): description`, factual
-  bullet points, ticket identifier on the last line). Auto-commits must
-  follow that format, including the `[tdd-red]` and `[wip]` markers where
-  applicable.
-- Keep commits small and focused.
-- Prefer one commit per logical change set.
-- Ticketless commits: when there is genuinely no associated ticket, use
-  `NO-TICKET` on the last line per `MANDATORY_CONVENTIONAL_COMMITS.md`. Do
-  not invent ticket identifiers.
 
 ### Auto-push policy
 - The agent may commit locally without asking.

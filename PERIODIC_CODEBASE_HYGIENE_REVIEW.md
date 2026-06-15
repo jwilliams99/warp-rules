@@ -13,90 +13,22 @@ Codebases accumulate cruft over time — dead code, stale comments, unused depen
 
 ### Hygiene Checklist
 
-1. **Duplicate / near-duplicate code**
-   •  Identify functions or blocks with overlapping logic.
-   •  Consolidate into canonical functions per the shared-logic rule.
-
-2. **Dead code & unreachable paths**
-   •  Remove functions, classes, methods, and variables that are never called.
-   •  Remove code behind impossible conditions or after unconditional returns.
-   •  Remove commented-out code blocks — version control is the archive.
-
-3. **Unused imports & dependencies**
-   •  Strip unused imports from source files.
-   •  Audit package manifests (package.json, requirements.txt, go.mod) for unused deps.
-
-4. **TODO / FIXME / HACK audit**
-   •  Every TODO must have a linked ticket or be resolved.
-   •  TODOs older than 90 days without a ticket should be resolved or removed.
-
-5. **Stale & misleading comments**
-   •  Remove or rewrite comments that no longer match the code's behaviour.
-   •  Prefer self-documenting code over explanatory comments where possible.
-
-6. **Complexity reduction**
-   •  Flag functions with high cyclomatic complexity (threshold: language-dependent, e.g. >10).
-   •  Extract sub-functions or simplify conditionals.
-
-7. **Naming consistency**
-   •  Enforce project naming conventions (casing, prefixes, verb/noun patterns).
-   •  Rename vague identifiers (data, temp, result, handle) to domain-specific names.
-
-8. **Magic numbers & hardcoded strings**
-   •  Extract to named constants, config files, or environment variables.
-
-9. **Error handling**
-   •  No bare/blanket exception catches without logging or re-raising.
-   •  Ensure errors propagate meaningful context.
-
-10. **Dependency health** — see `CI_GATES.md` and `SECURITY_BY_DEFAULT.md`
-    for the authoritative rules on dependency scanning, CVE SLAs, version
-    drift, lockfile pinning, and SBOM generation. This hygiene review
-    confirms those controls are active; it does not restate the tooling.
-
-11. **Test hygiene**
-    •  Remove or fix permanently skipped tests.
-    •  Flag tests with no assertions.
-    •  Investigate and fix flaky tests.
-
-12. **Security surface** — see `SECURITY_BY_DEFAULT.md` for input
-    validation, least-privilege, authorisation tests, and security gates,
-    and `SECRETS_AND_CREDENTIALS_HANDLING.md` for secrets handling. This
-    hygiene review confirms those controls are active and not silently
-    weakened; it does not restate the rules.
-
-13. **Unused config & environment variables**
-    •  Remove env vars and config keys that no code path references.
-    •  Keep .env.example in sync with actual usage.
-
-14. **Documentation currency**
-    •  **README accuracy**
-      ◦  Verify setup/install instructions work on a clean checkout.
-      ◦  Confirm listed prerequisites, versions, and commands are current.
-      ◦  Ensure project description reflects actual scope and purpose.
-    •  **API documentation**
-      ◦  All public endpoints / exported functions must have accurate docs.
-      ◦  Request/response schemas, parameters, and return types must match implementation.
-      ◦  Deprecated endpoints must be marked as such (not silently left).
-    •  **Architecture & design docs**
-      ◦  Diagrams and flowcharts must reflect the current system topology.
-      ◦  Remove references to decommissioned services, old database schemas, or retired patterns.
-      ◦  If architecture has diverged from docs, update docs or file a ticket to reconcile.
-    •  **Inline documentation (docstrings / JSDoc / GoDoc)**
-      ◦  Public functions, classes, and modules must have accurate docstrings.
-      ◦  Parameter descriptions, return values, and exceptions/errors must match the signature.
-      ◦  Remove docstrings that describe behaviour the code no longer implements.
-    •  **Runbooks & operational docs**
-      ◦  Deployment steps must match the current CI/CD pipeline.
-      ◦  Incident response procedures must reference current tooling and contacts.
-      ◦  Verify monitoring/alerting references point to active dashboards and channels.
-    •  **Changelog / ADRs (Architecture Decision Records)**
-      ◦  Significant changes must be recorded in a changelog or ADR.
-      ◦  ADRs for superseded decisions should be marked as such, not deleted.
-    •  **Onboarding & contributing guides**
-      ◦  New-contributor setup steps must work end to end.
-      ◦  Coding standards, branch naming, and PR process docs must be current.
-      ◦  Verify links to external resources (wikis, Confluence, Notion) are not broken.
+| # | Category | What to check | Action | Reference |
+|---|----------|--------------|--------|----------|
+| 1 | Duplication | Functions/blocks with overlapping logic | Consolidate into canonical location | `CENTRALISED_BUSINESS_LOGIC.md` |
+| 2 | Dead code | Unused functions, classes, methods, variables, impossible branches, commented-out code | Remove (version control is the archive) | — |
+| 3 | Unused imports & deps | Imports in source, package manifests | Strip/audit (package.json, requirements.txt, go.mod) | — |
+| 4 | TODO / FIXME / HACK | Linked ticket? Older than 90 days? | Resolve or ticket | `CI_GATES.md` |
+| 5 | Stale comments | Comments that no longer match code behaviour | Remove or rewrite | — |
+| 6 | Complexity | High cyclomatic complexity (language-dependent threshold, e.g. >10) | Extract sub-functions or simplify | `CI_GATES.md` |
+| 7 | Naming | Casing, prefixes, verb/noun patterns, vague identifiers | Enforce conventions | — |
+| 8 | Magic numbers | Hardcoded constants and strings | Extract to named constants, config, or env vars | — |
+| 9 | Error handling | Bare/blanket catches without logging or re-raising | Add context propagation | — |
+| 10 | Dependency health | CVEs, SLAs, version drift, lockfile pinning, SBOM | Confirm controls active | `CI_GATES.md`, `SECURITY_BY_DEFAULT.md` |
+| 11 | Test hygiene | Permanently skipped tests, tests with no assertions, flaky tests | Fix or remove | — |
+| 12 | Security surface | Input validation, least-privilege, authz tests, secrets handling | Confirm controls active | `SECURITY_BY_DEFAULT.md` |
+| 13 | Unused config & env vars | Env vars and config keys no code path references | Remove; keep .env.example in sync | — |
+| 14 | Documentation currency | README, API docs, architecture docs, inline docstrings, runbooks, changelog/ADRs, onboarding guides | Verify accuracy; update or reconcile | — |
 
 ### Outputs
 Each review should produce:

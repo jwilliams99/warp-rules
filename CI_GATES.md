@@ -20,7 +20,7 @@ Every repo must run the gates below, using the named tool for the stack in use. 
 1. Secrets scanning
    •  Tools: `gitleaks` (pre-commit and CI), `trufflehog` on PR diff, full-history scan on branch creation.
    •  Behaviour: any finding is blocking; no allowlist without documented rotation.
-   •  References: `SECRETS_AND_CREDENTIALS_HANDLING.md`, `SECURITY_BY_DEFAULT.md`.
+   •  References: `SECURITY_BY_DEFAULT.md` (secrets section).
 
 2. Static application security testing (SAST)
    •  Tools: `semgrep` (polyglot default) or `codeql` where available; language-specific rulesets opt-in.
@@ -35,8 +35,23 @@ Every repo must run the gates below, using the named tool for the stack in use. 
    •  Behaviour: blocking at `high` severity.
 
 5. Lint, format, type
-   •  Tools per stack, per `STANDARD_TOOLING.md` (for example `black`, `isort`, `ruff`, `prettier`, `eslint`, `gofmt`, `terraform fmt`).
+   •  Tools per stack (see table below).
    •  Behaviour: blocking.
+
+Tools by language:
+- Python: `black` (formatter), `isort` (imports), `ruff` (linter and
+  import-checker), `mypy` or `pyright` (type-check).
+- JavaScript: `prettier` (formatter), `eslint` (linter).
+- TypeScript: `prettier` (formatter), `eslint` (linter), `tsc --noEmit` (type-check).
+- Go: `gofmt` (or `goimports`), `go vet`, `staticcheck`.
+- Rust: `rustfmt`, `clippy`.
+- Terraform: `terraform fmt`, `tflint`.
+- Shell: `shellcheck`, `shfmt`.
+- Markdown: `markdownlint` where configured.
+
+If the repository defines a project-standard formatter or linter that does
+not match this list, follow the repository's choice. Record any deliberate
+deviation in the repository's README.
 
 6. Duplication scan
    •  Default: `jscpd` (polyglot).
@@ -90,8 +105,6 @@ Each repository should publish, at minimum:
 - Consequence on breach: any failing required gate blocks the PR from
   merging and blocks the deployment pipeline. Missing gates in a repo are
   themselves a defect and must be added on the next change.
-- Owners: the hygiene and security owners on the current rotation, per
-  `PERIODIC_CODEBASE_HYGIENE_REVIEW.md` and `SECURITY_BY_DEFAULT.md`.
 
 ### Mapping to the global Definition of Done
 Each CI gate in this file satisfies one or more bullets in the Definition
@@ -114,11 +127,8 @@ if the DoD or this file changes, update the other in the same change set.
 
 ### Related canonical rules
 - `SECURITY_BY_DEFAULT.md` — defines what must be gated and why.
-- `SECRETS_AND_CREDENTIALS_HANDLING.md` — authoritative rule for secrets
-  handling.
 - `PERIODIC_CODEBASE_HYGIENE_REVIEW.md` — broader hygiene checklist; this
   rule automates the parts that can be automated.
 - `DATABASE_MIGRATIONS.md` — migration CI expectations.
-- `STANDARD_TOOLING.md` — lint, format, and type tooling per language.
 - `DEVELOPMENT_PROCESS.md` — the global Definition of Done; every gate in
   this file maps to one or more DoD bullets (see mapping above).

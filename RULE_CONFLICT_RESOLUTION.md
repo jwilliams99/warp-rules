@@ -18,7 +18,61 @@ testing, commits, hygiene, and so on). Domains do not have a total ordering;
 a rule in one domain does not automatically override a rule in another. This
 rule therefore does not publish a priority list. When two rules appear to
 conflict, the agent must treat the conflict as a gap in the ruleset, not a
-question of rank. See `RULES_INDEX.md` for the mapping of rules to domains.
+question of rank.
+
+### Domain map
+This section maps each remaining rule to its domain.
+
+**Security and trust**
+- Broad security design, gates, least privilege, secrets, credentials,
+  detection, rotation, incident playbook, security tests:
+  `SECURITY_BY_DEFAULT.md`.
+- Required CI checks and detection tooling per stack: `CI_GATES.md`.
+
+**Planning and delivery**
+- Plan document structure, phase status, pre-implementation gates:
+  `PLANNING.md`.
+- Phase execution, branching, PR template, Definition of Done:
+  `DEVELOPMENT_PROCESS.md`.
+- Commit format, auto-commit rules, TDD red-first, WIP markers:
+  `COMMIT_DISCIPLINE.md`.
+
+**Code quality and correctness**
+- TDD, test categories, coverage expectations:
+  `TEST_DRIVEN_DEVELOPMENT.md`.
+- Code-review concerns specific to reviewing a change in flight:
+  `CODE_REVIEW.md`.
+- Codebase alignment, refactoring scope, readability, Boy Scout rule:
+  `CODEBASE_ALIGNMENT_POLICY.md`.
+- Single-source-of-truth for shared business logic:
+  `CENTRALISED_BUSINESS_LOGIC.md`.
+- Periodic hygiene review (dead code, TODOs, naming, docs currency):
+  `PERIODIC_CODEBASE_HYGIENE_REVIEW.md`.
+
+**Data layer**
+- ORM usage, migrations, seed data, production DDL/DML discipline:
+  `DATABASE_MIGRATIONS.md`.
+
+**Agent behaviour and communication**
+- Factual grounding, uncertainty handling, prohibited patterns,
+  Australian / UK English language standard:
+  `FACTUAL_AND_TRANSPARENT_RESPONSE.md`.
+
+**Process meta**
+- This file: `RULE_CONFLICT_RESOLUTION.md`.
+
+### Cross-cutting pointers
+Some concerns are touched by multiple rules; the canonical source is
+listed first, the references are listed in parentheses.
+
+- Duplication and reuse: `CENTRALISED_BUSINESS_LOGIC.md` (plus
+  `CODEBASE_ALIGNMENT_POLICY.md`, `CODE_REVIEW.md`, `CI_GATES.md`).
+- Security gates: `SECURITY_BY_DEFAULT.md` (plus `CI_GATES.md` for the
+  specific tools, `DEVELOPMENT_PROCESS.md` for the DoD bullets).
+- Documentation currency: `PERIODIC_CODEBASE_HYGIENE_REVIEW.md` (plus
+  `DEVELOPMENT_PROCESS.md` DoD).
+- Commit format: `COMMIT_DISCIPLINE.md` (plus
+  `TEST_DRIVEN_DEVELOPMENT.md` for the red-first marker).
 
 ### When to escalate
 Escalate to a human whenever any of the following are true:
@@ -57,7 +111,7 @@ The human decides. The agent does not proceed until a decision is made.
 - Update the affected rule file(s) with the agreed wording, or record that
   the human chose not to update the rules and why.
 - Commit the rule update as a separate commit from the task work, per
-  `MANDATORY_CONVENTIONAL_COMMITS.md`. Example:
+  `COMMIT_DISCIPLINE.md`. Example:
 
 ```
 docs(rules): clarify conflict between codebase-alignment and centralised-logic
@@ -77,7 +131,7 @@ canonical. Consolidating into a canonical location may mean deviating from
 local patterns. The right answer depends on whether the local pattern is an
 intentional convention or accumulated drift.
 
-**`DEVELOPMENT_PROCESS.md` vs `GIT_AUTOCOMMIT.md`**
+**`DEVELOPMENT_PROCESS.md` vs `COMMIT_DISCIPLINE.md`**
 Phase-boundary rules and auto-commit batching rules can conflict when a
 coherent logical change spans what the phase boundary would consider
 separate concerns. Escalate rather than deciding unilaterally which
@@ -94,7 +148,7 @@ Stop, state what needs to be verified, and ask before proceeding.
   adjudicate between rules.
 - All other rule files may reference this file when they anticipate a
   conflict with another rule.
-- See `RULES_INDEX.md` for the current mapping of rules to domains.
+- The domain map above replaces the former `RULES_INDEX.md` file.
 
 ### Enforcement
 - Applies to: all situations where two or more rules give conflicting

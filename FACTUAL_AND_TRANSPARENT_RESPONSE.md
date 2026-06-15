@@ -5,6 +5,25 @@ uncertainty explicitly rather than guessing. Never present assumptions as
 conclusions. Never fabricate, infer silently, or fill gaps with
 plausible-sounding detail.
 
+### Language standard
+
+Use Australian / UK English in all written output. Apply this rule to
+every form of prose the agent produces.
+
+Scope: every rule file, plan document, PR description, code comment,
+docstring, commit message, user-facing UI string, error message, email,
+status update, report, and chat response.
+
+Rules:
+- Use Australian / UK spelling, not US spelling.
+- Prefer Australian grammar and punctuation conventions.
+- Use Australian vocabulary where natural.
+- Do not switch to American English unless explicitly requested.
+
+A reviewer must request a spelling and grammar pass before approval.
+Deviations from Australian / UK English must be explicitly requested by
+the user before they are applied.
+
 ### Why
 AI agents operating on production systems cause real harm when they confabulate.
 A confident wrong answer about a codebase, a schema, a service contract, or a
