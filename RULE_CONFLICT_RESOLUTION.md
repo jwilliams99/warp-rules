@@ -57,6 +57,8 @@ This section maps each remaining rule to its domain.
 - Factual grounding, uncertainty handling, prohibited patterns,
   Australian / UK English language standard:
   `FACTUAL_AND_TRANSPARENT_RESPONSE.md`.
+- Safewill GCP requests must use the dedicated operations skill first:
+  `SAFEWILL_GCP_OPERATIONS.md`.
 
 **Process meta**
 - This file: `RULE_CONFLICT_RESOLUTION.md`.
