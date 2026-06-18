@@ -5,6 +5,11 @@ the agent must not resolve the conflict silently. Stop, surface the
 conflict to a human, and propose a resolution that can be incorporated
 into the ruleset to prevent recurrence.
 
+when the canonical framework cannot represent the new requirement without
+new code and a separate stabilisation effort is in flight on the shared 
+file, prefer the locally-aligned location and record the duplication 
+justification.
+
 ### Why
 Silent conflict resolution is undocumented decision-making. When an agent
 picks one rule over another without flagging it, the human loses visibility
