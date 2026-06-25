@@ -8,13 +8,40 @@ conformance can be checked uniformly across plans.
   - Created: YYYY-MM-DD HH:MM TZ
   - Completed: Not completed
   - Approved by: <human who approves>
-  - Approved date: <date when the approval happened>
+  - Approved date: YYYY-MM-DD HH:MM TZ
 - Set Created when the plan is first written.
 - Leave Completed as Not completed until the plan is fully finished.
 - When the plan is complete, update Completed immediately with the actual date and time.
 - A plan is not complete until the Completed field has been updated.
 - Timezone: all timestamps in the plan (`Created`, `Completed`, and any other dated fields) must be recorded in the user's local timezone, not UTC and not the agent's default timezone. Include an explicit IANA timezone name (for example `Australia/Sydney`) or an offset (for example `+10:00`) after the time so the value is unambiguous. Example: `Created: 2026-04-18 11:39 Australia/Sydney`.
 - The Warp Drive copy and every repo mirror must use the same timezone for the same timestamp; do not convert between zones when mirroring.
+
+Post-approval deviation log (mandatory):
+- Every plan must include a `## Deviations` section before or at the time of approval.
+  - Before approval: `Not applicable; plan not yet approved`
+  - At approval, if no deviations exist yet: `None recorded`
+- After `Approved by` and `Approved date` are set, any substantive change to the approved scope, approach, phase/step content, acceptance criteria, pre-implementation gates, threat model, contracts, affected repositories, or implementation strategy must be logged explicitly as a deviation in the same plan document.
+- Routine lifecycle updates — phase/step status changes, blocker notes, test results, mirror sync metadata, and setting the `Completed` timestamp — do not constitute deviations unless they alter the approved plan.
+- Adding the deviation entry in the same change-set as the modification satisfies the logging requirement for that modification.
+- Logging a deviation is an edit and triggers the mirroring rule. The deviation entry and any corresponding plan changes must be mirrored to every affected repository in the same change-set. Affected work must pause until the mirror reflects the deviation.
+- If a deviation changes the set of affected repositories, the `Mirrors:` field and repo mirror set must be updated in the same change-set.
+- If a deviation invalidates any pre-implementation gate answer, the relevant gate must be updated before affected work continues.
+- Material deviations require human re-approval before affected implementation continues. Material deviations include changes to scope, security posture, user-data handling, public/internal contracts, acceptance criteria, affected repositories, dependencies, deployment/rollback approach, or completion criteria.
+- Deviations may only be logged while the plan is active. Once a plan is marked complete and moved to `docs/ai-planning/complete/`, the plan document is immutable; subsequent issues must be handled in a new follow-up plan that references the completed plan.
+- Deviation entries must be append-only and listed in chronological order.
+- Silent edits to approved plans are prohibited.
+
+Each deviation entry must include:
+
+- Date: `YYYY-MM-DD HH:MM TZ` (using the same local timezone standard as the plan header)
+- Recorded by: <human or agent identifier>
+- Deviation: what changed compared with the most recent approved baseline (as modified by prior logged deviations)
+- Reason: why the change was necessary
+- Impact: affected phases, steps, repositories, contracts, or gates
+- Remedy: corrective action, mitigation, `Accepted Risk`, `Verified`, follow-up plan reference, or `n/a`
+- Requires re-approval: yes / no
+- Re-approved by: <human> or `n/a`
+- Re-approved date: `YYYY-MM-DD HH:MM TZ` or `n/a`
 
 Phase status requirements:
 
