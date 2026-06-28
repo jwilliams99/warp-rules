@@ -10,6 +10,7 @@ Human approval must be explicit, not implied.
 - Each phase must have a clearly defined implementation boundary, validation boundary, and merge boundary.
 - No implementation work may begin until the relevant phase is marked as started in the plan.
 - No phase may be considered complete until its code, tests, review, and merge steps are complete.
+- If a phase branch has been created for a phase, that phase branch must be merged before the phase is marked complete. This requirement is hard, mandatory, and non-negotiable.
 
 ### Canonical branch
 - `main` or `master`, whichever the repository uses, is the canonical branch.
@@ -65,6 +66,7 @@ Human approval must be explicit, not implied.
   - run the required validation for that phase
   - update step statuses to reflect reality
   - prepare the phase for review through a pull request
+  - do not mark the phase complete until the corresponding phase branch is merged
 
 ### Pull request rules
 - Every phase must be merged through a pull request.
@@ -73,6 +75,7 @@ Human approval must be explicit, not implied.
 - PR titles should identify the plan and phase clearly.
 - Recommended PR title format:
   - `[Plan: <name>] Phase <n> - <phase name>`
+- If a branch was created for a phase, that branch must be merged for the phase to be complete. Closing a phase PR unmerged while marking the phase complete is prohibited.
 
 ### PR template rules
 - Every PR must use the standard PR structure below.
@@ -176,6 +179,8 @@ marked n/a must state why.
 - Migrations, if any, satisfy the Definition of Done in `DATABASE_MIGRATIONS.md`.
 - Plan phase status reflects reality (see `PLANNING.md`); PR description follows
   the template in this rule.
+- If a phase branch exists for the phase, it has been merged. An unmerged phase
+  branch means the phase is not complete.
 
 ### Enforcement
 - Applies to: every phase of every plan across every repository with
@@ -184,5 +189,6 @@ marked n/a must state why.
   phase, branch, or PR-template rules; a phase must not transition to
   `🟡 In Progress` without the pre-implementation gates in `PLANNING.md`
   filled; a phase must not be marked `🟢 Complete` while any applicable
-  Definition-of-Done item is unmet.
+  Definition-of-Done item is unmet; if a phase branch exists, that phase
+  must not be marked complete until the branch is merged.
 

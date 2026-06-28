@@ -59,6 +59,7 @@ Phase status rules:
 - When a phase cannot proceed or has irrecoverable issues, update it immediately to 🔴 Failed.
 - Use 🟣 Other only when the state does not fit the predefined categories, and state the specific condition clearly.
 - A phase must never remain 🔵 Not Started once work has begun. The gating condition for the transition to 🟡 In Progress is defined in the "Pre-implementation gates" section below; work must not begin until those gates are filled.
+- If a branch was created for a phase, the phase must not be marked 🟢 Complete until that branch is merged.
 - Status must reflect reality, not optimism.
 
 Step-level tracking:
