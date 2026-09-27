@@ -10,27 +10,29 @@ Human approval must be explicit, not implied.
 - Each phase must have a clearly defined implementation boundary, validation boundary, and merge boundary.
 - No implementation work may begin until the relevant phase is marked as started in the plan.
 - No phase may be considered complete until its code, tests, review, and merge steps are complete.
-- If a phase branch has been created for a phase, that phase branch must be merged before the phase is marked complete. This requirement is hard, mandatory, and non-negotiable.
+- A phase is delivered through its approved merge units. Each merge unit has exactly one task branch and pull request; no branch is required for the phase as a whole.
+- Do not mark a phase complete until every merge unit's pull request is merged and its acceptance criteria are verified.
 
 ### Canonical branch
 - `main` or `master`, whichever the repository uses, is the canonical branch.
 - No direct commits may be made to the canonical branch.
-- All phase branches must be created from the current canonical branch.
-- Do not branch from another feature or phase branch.
+- All task branches must be created from the latest canonical branch.
+- Do not branch from another feature or task branch.
 
 ### Branching model
-- Every implementation phase must be done on its own branch.
-- Keep the branch model simple: one phase, one branch, one PR.
-- All phase branches must be created from the latest canonical branch.
+- Every implementation phase must define one or more merge units in the approved plan, as specified in `PLANNING.md`.
+- Each merge unit maps to exactly one task branch and one pull request. A phase can have multiple branches and pull requests; there is no phase branch.
+- Do not combine separate merge units in one pull request or split one merge unit across pull requests. Change a boundary only by updating and re-approving the plan before continuing.
+- Create each task branch from the latest canonical branch.
 
 ### Branch naming
-- Branch names must identify both the plan and the phase they implement.
+- Planned-work branch names must identify the plan, phase, and merge unit.
 - Recommended format:
-  - `plan/<short-plan-name>/phase-<n>-<short-phase-name>`
+  - `plan/<short-plan-name>/p<phase>-<merge-unit-id>-<short-description>`
 - Examples:
-  - `plan/layered-context-loading/phase-1-schema`
-  - `plan/token-attribution/phase-3-search-response`
-  - `plan/knowledge-graph/phase-2-service-layer`
+  - `plan/layered-context-loading/p1-MU1-schema`
+  - `plan/token-attribution/p3-MU2-search-response`
+  - `plan/knowledge-graph/p2-MU1-service-layer`
 - For work that is not scoped to an approved plan phase, use:
   - `feature/<short-description>` for new functionality
   - `fix/<short-description>` for defect fixes
@@ -48,34 +50,42 @@ Human approval must be explicit, not implied.
 - After the task is merged:
   - `git switch <canonical-branch>`
   - `git pull origin <canonical-branch>`
-  - `git branch -d <completed-branch>`
-  - `git push origin --delete <completed-branch>`
+  - Delete the local branch with `git branch -d <completed-branch>` only when
+    it is fully merged and has no uncommitted work.
+  - Remote branch deletion is optional. Before running
+    `git push origin --delete <completed-branch>`, obtain explicit user
+    approval for that branch immediately beforehand, regardless of the
+    auto-push policy. If approval is not given, leave the remote branch in
+    place. See `COMMIT_DISCIPLINE.md` → Auto-push policy.
 - If a merge conflict occurs at any stage, stop and ask for guidance before resolving.
 
 ### Phase execution rules
 - Before starting a phase:
   - verify pre-implementation gates are filled in the plan (see `PLANNING.md`)
+  - verify every implementation deliverable is represented by an approved merge unit with acceptance criteria and validation
   - update the plan phase status to `🟡 In Progress`
-  - create the phase branch from the canonical branch
-  - ensure the branch scope matches the phase scope
+- Before starting each merge unit:
+  - create its task branch from the latest canonical branch
+  - ensure the branch scope matches exactly that merge unit
 - During the phase:
-  - keep changes limited to the phase boundary defined in the plan
+  - keep changes limited to the active merge unit
   - do not mix unrelated refactors or opportunistic cleanup unless explicitly documented
-  - keep the plan updated as step status changes
-- When implementation is complete:
-  - run the required validation for that phase
-  - update step statuses to reflect reality
-  - prepare the phase for review through a pull request
-  - do not mark the phase complete until the corresponding phase branch is merged
+  - do not combine or split merge units; revise and re-approve the plan first if the boundary must change
+  - keep phase, merge-unit, and step statuses updated as work progresses
+- When a merge unit is implemented:
+  - run its required validation
+  - prepare its task branch as one pull request for review
+  - do not mark the merge unit complete until its pull request is merged and acceptance criteria are verified
+- Mark the phase complete only after all of its merge units are complete.
 
 ### Pull request rules
-- Every phase must be merged through a pull request.
-- No phase branch may be merged without review.
-- PRs must be scoped to a single phase unless the plan explicitly defines a combined merge.
-- PR titles should identify the plan and phase clearly.
+- Every merge unit must be merged through exactly one pull request, and no pull request may contain more than one merge unit.
+- No task branch may be merged without review.
+- Every pull request must be scoped to one phase and identify its merge-unit ID.
+- PR titles should identify the plan, phase, and merge unit clearly.
 - Recommended PR title format:
-  - `[Plan: <name>] Phase <n> - <phase name>`
-- If a branch was created for a phase, that branch must be merged for the phase to be complete. Closing a phase PR unmerged while marking the phase complete is prohibited.
+  - `[Plan: <name>] Phase <n> / <merge-unit-id> - <deliverable>`
+- A phase is not complete until all its merge-unit pull requests are merged. Closing a required pull request unmerged while marking the phase complete is prohibited.
 
 ### PR template rules
 - Every PR must use the standard PR structure below.
@@ -85,6 +95,7 @@ Human approval must be explicit, not implied.
 ## Plan
 - Plan: <plan name>
 - Phase: <phase number and name>
+- Merge unit: <ID and name>
 
 ## Purpose
 - What this phase implements
@@ -113,7 +124,8 @@ Two-part gate: first that the Pre-implementation gates were filled in the
 plan before work began (per `PLANNING.md`), and second that the during-
 implementation updates have been reconciled.
 
-Pre-implementation gates (verified before the phase branch was created):
+Pre-implementation gates (verified before implementation began and before
+the first merge-unit branch was created):
 - Prior-art and reuse check:
   - [ ] Completed — plan section filled; see "Reuse and alignment" above
   - [ ] n/a — state which surfaces were checked and why none applied
@@ -159,8 +171,8 @@ marked n/a must state why.
 
 - Pre-implementation gates were completed and recorded in the plan before work
   began: prior-art and reuse check, and threat model (or explicit n/a with
-  reasoning). A reviewer must verify both were filled before the phase branch
-  was created, not retrofitted during PR preparation.
+  reasoning). A reviewer must verify both were filled before the first
+  merge-unit branch was created, not retrofitted during PR preparation.
 - Tests pass: unit, integration, and any security/authz tests required by the
   plan or by `SECURITY_BY_DEFAULT.md`.
 - Lint, type, and format checks clean, per `CI_GATES.md`.
@@ -179,16 +191,15 @@ marked n/a must state why.
 - Migrations, if any, satisfy the Definition of Done in `DATABASE_MIGRATIONS.md`.
 - Plan phase status reflects reality (see `PLANNING.md`); PR description follows
   the template in this rule.
-- If a phase branch exists for the phase, it has been merged. An unmerged phase
-  branch means the phase is not complete.
+- Every merge unit defined for the phase has one merged pull request, and its
+  acceptance criteria are verified. A dedicated phase branch is not required.
 
 ### Enforcement
 - Applies to: every phase of every plan across every repository with
   active development.
 - Consequence on breach: a reviewer must block any PR that violates the
-  phase, branch, or PR-template rules; a phase must not transition to
+  phase, merge-unit, task-branch, or PR-template rules; a phase must not transition to
   `🟡 In Progress` without the pre-implementation gates in `PLANNING.md`
   filled; a phase must not be marked `🟢 Complete` while any applicable
-  Definition-of-Done item is unmet; if a phase branch exists, that phase
-  must not be marked complete until the branch is merged.
-
+  Definition-of-Done item is unmet; a phase must not be marked complete
+  until all of its merge units have been merged and verified.

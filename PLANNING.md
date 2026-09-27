@@ -14,17 +14,16 @@ conformance can be checked uniformly across plans.
 - When the plan is complete, update Completed immediately with the actual date and time.
 - A plan is not complete until the Completed field has been updated.
 - Timezone: all timestamps in the plan (`Created`, `Completed`, and any other dated fields) must be recorded in the user's local timezone, not UTC and not the agent's default timezone. Include an explicit IANA timezone name (for example `Australia/Sydney`) or an offset (for example `+10:00`) after the time so the value is unambiguous. Example: `Created: 2026-04-18 11:39 Australia/Sydney`.
-- The Warp Drive copy and every repo mirror must use the same timezone for the same timestamp; do not convert between zones when mirroring.
 
 Post-approval deviation log (mandatory):
 - Every plan must include a `## Deviations` section before or at the time of approval.
   - Before approval: `Not applicable; plan not yet approved`
   - At approval, if no deviations exist yet: `None recorded`
 - After `Approved by` and `Approved date` are set, any substantive change to the approved scope, approach, phase/step content, acceptance criteria, pre-implementation gates, threat model, contracts, affected repositories, or implementation strategy must be logged explicitly as a deviation in the same plan document.
-- Routine lifecycle updates — phase/step status changes, blocker notes, test results, mirror sync metadata, and setting the `Completed` timestamp — do not constitute deviations unless they alter the approved plan.
+- Routine lifecycle updates — phase/step status changes, blocker notes, test results, repository-copy sync metadata, and setting the `Completed` timestamp — do not constitute deviations unless they alter the approved plan.
 - Adding the deviation entry in the same change-set as the modification satisfies the logging requirement for that modification.
-- Logging a deviation is an edit and triggers the mirroring rule. The deviation entry and any corresponding plan changes must be mirrored to every affected repository in the same change-set. Affected work must pause until the mirror reflects the deviation.
-- If a deviation changes the set of affected repositories, the `Mirrors:` field and repo mirror set must be updated in the same change-set.
+- Logging a deviation is an edit and triggers the repository-copy sync rule. The deviation entry and any corresponding plan changes must be copied to every affected repository in the same change-set. Affected work must pause until all copies reflect the deviation.
+- If a deviation changes the set of affected repositories, the `Mirrors:` field and repository copies must be updated in the same change-set.
 - If a deviation invalidates any pre-implementation gate answer, the relevant gate must be updated before affected work continues.
 - Material deviations require human re-approval before affected implementation continues. Material deviations include changes to scope, security posture, user-data handling, public/internal contracts, acceptance criteria, affected repositories, dependencies, deployment/rollback approach, or completion criteria.
 - Deviations may only be logged while the plan is active. Once a plan is marked complete and moved to `docs/ai-planning/complete/`, the plan document is immutable; subsequent issues must be handled in a new follow-up plan that references the completed plan.
@@ -52,6 +51,13 @@ Phase status requirements:
   - 🔴 Failed
   - 🟣 Other
 
+### Merge-unit requirements
+- Every implementation phase must define one or more merge units before it moves to 🟡 In Progress.
+- Each merge unit must have a unique ID, a bounded scope, acceptance criteria, required validation, and a status using the existing step-level status vocabulary.
+- Each merge unit maps to exactly one task branch and one pull request. A phase may contain multiple merge units; it does not have a dedicated phase branch.
+- Do not combine separate merge units into one pull request or split a merge unit across pull requests during implementation. If a boundary must change, update the plan and record the deviation before continuing.
+- Include the merge-unit ID in its branch name and pull-request description; add the pull-request link to the plan when the PR is opened.
+
 Phase status rules:
 
 - When a phase begins, update it immediately to 🟡 In Progress.
@@ -59,7 +65,7 @@ Phase status rules:
 - When a phase cannot proceed or has irrecoverable issues, update it immediately to 🔴 Failed.
 - Use 🟣 Other only when the state does not fit the predefined categories, and state the specific condition clearly.
 - A phase must never remain 🔵 Not Started once work has begun. The gating condition for the transition to 🟡 In Progress is defined in the "Pre-implementation gates" section below; work must not begin until those gates are filled.
-- If a branch was created for a phase, the phase must not be marked 🟢 Complete until that branch is merged.
+- Do not mark a phase 🟢 Complete until all of its merge units are complete, their pull requests are merged, and their acceptance criteria are verified.
 - Status must reflect reality, not optimism.
 
 Step-level tracking:
@@ -129,39 +135,36 @@ Consistency and codebase conformity:
   - if a new pattern is introduced, explicitly justify why the current pattern is insufficient, why extension is not appropriate, and how consistency will be preserved
 - For shared/canonical business logic specifically, defer to `CENTRALISED_BUSINESS_LOGIC.md`.
 
-### Plan mirroring (Warp Drive ⇄ repo)
-Every plan must exist in two synchronised locations: the canonical Warp Drive plan document, and a mirrored Markdown file checked into each affected repository.
+### Plan storage and repository copies
+The plan checked into the primary repository is the single source of truth. Every plan that gates non-trivial work must be stored in Git; do not depend on an external planning service as the canonical copy.
 
 Location and naming:
-- Mirror path: `docs/ai-planning/<snake_case_slug>.md` in each affected repo.
+- Canonical path: `docs/ai-planning/<snake_case_slug>.md` in the designated primary repository.
 - Slug: derived from the plan title, lower-case, ASCII only, words separated by underscores.
 - One file per plan. Do not date-prefix or version-suffix the filename; history is tracked via Git.
-- Multi-repo plans: mirror must exist in every affected repository at the same path.
-- Header fields: `Warp Drive plan:` (canonical plan identifier) and `Mirrors:` (list of repo paths).
+- Multi-repository plans: include a synchronised copy at the same path in every affected repository, and list those repositories in the `Mirrors:` header field.
+- Header field: `Mirrors:` (list of repository paths; use `None` when the plan affects only its primary repository).
 
 Sync timing (mandatory):
-- Every edit to the Warp Drive plan must be mirrored to every affected repo as part of the same change-set.
-- A phase must not transition status until the repo mirror(s) reflect the Warp Drive content for that transition.
-- Silent divergence between Warp Drive and the repo mirror(s) is a breach of this rule.
+- Every edit to the canonical plan must be copied to every affected repository as part of the same change-set.
+- A phase must not transition status until all repository copies reflect that change.
+- Silent divergence between repository copies is a breach of this rule.
 
 Ownership and authority:
-- The Warp Drive plan is the human-facing canonical copy for discussion and status.
-- The repo mirror is the machine-auditable copy for PR review, CI, and historical reference.
-- When the two diverge, stop and reconcile before further work.
+- The primary repository's plan is authoritative for discussion, status, and history.
+- Copies in other affected repositories provide locally auditable references for PR review and CI.
+- When copies diverge, stop and reconcile them before further work.
 
 Completed-plan archival:
-- When a plan is marked complete (its `Completed` field filled with actual date and time), the mirrored file must be moved from `docs/ai-planning/<snake_case_slug>.md` to `docs/ai-planning/complete/<snake_case_slug>.md` in every affected repository.
+- When a plan is marked complete (its `Completed` field filled with actual date and time), the canonical file and every repository copy must be moved from `docs/ai-planning/<snake_case_slug>.md` to `docs/ai-planning/complete/<snake_case_slug>.md`.
 - Use `git mv` so history is preserved. Files under `complete/` are immutable.
-- The Warp Drive copy's `Completed` field must stay consistent with the mirror location.
 
 ### Enforcement
 - Applies to: every plan that gates any non-trivial change.
 - Consequence on breach: a phase must not transition from `🔵 Not
   Started` to `🟡 In Progress` until the pre-implementation gates are
   filled; a plan must not be marked complete until the `Completed` field
-  is set with the actual date and time AND the mirror has been moved to
-  `docs/ai-planning/complete/` in every affected repository; a phase
-  must not transition status at all while the Warp Drive plan and its
-  repo mirror(s) under `docs/ai-planning/` are out of sync; a reviewer
+  is set with the actual date and time AND the canonical file and copies
+  have been moved to `docs/ai-planning/complete/`; a phase must not
+  transition status while repository copies are out of sync; a reviewer
   must block any PR whose plan does not meet these requirements.
-

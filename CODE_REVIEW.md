@@ -69,9 +69,29 @@ This rule covers code-review concerns that are specific to reviewing a change in
 - TODO/FIXME/HACK comments are only acceptable if they link to a tracked ticket, in line with `PERIODIC_CODEBASE_HYGIENE_REVIEW.md`.
 - TODOs that represent unresolved design decisions must be resolved before the change is approved, not deferred via a ticket.
 
+### Finding severity
+Every finding must be assigned one of these levels and include its location,
+evidence, impact, and requested outcome:
+
+- **Blocker** — A demonstrated security or authorisation weakness, data leak,
+  data loss/corruption, serious correctness defect, violation of a required
+  contract, or failure of a mandatory CI gate. Must be fixed before approval.
+- **Should fix** — A material maintainability, performance, observability, or
+  correctness risk that should normally be addressed before merge. It may be
+  deferred only with reviewer agreement, a rationale recorded in the PR, and a
+  follow-up ticket when work remains.
+- **Suggestion** — Optional improvement, style preference, or minor polish.
+  It does not block approval and does not need to be resolved.
+
+Use the highest severity supported by evidence. Do not classify personal
+preference or unsupported speculation as a blocker. If a potential security,
+data-integrity, or correctness impact is credible but unverified, state the
+uncertainty and request the evidence needed to classify it.
+
 ### Enforcement
 - Applies to: every PR under review.
-- Consequence on breach: a reviewer must withhold approval and request
-  changes until every concern listed above is resolved or explicitly
-  justified. Approving a PR with unresolved items is itself a review
-  defect.
+- Consequence on breach: a reviewer must withhold approval while any Blocker
+  remains unresolved. A Should fix finding must be fixed or explicitly
+  accepted by the reviewer with its rationale recorded in the PR. Suggestions
+  are non-blocking. Approving a PR with an unresolved Blocker, or treating a
+  Suggestion as a merge blocker, is a review defect.

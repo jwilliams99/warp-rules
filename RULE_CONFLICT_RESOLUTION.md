@@ -62,8 +62,6 @@ This section maps each remaining rule to its domain.
 - Factual grounding, uncertainty handling, prohibited patterns,
   Australian / UK English language standard:
   `FACTUAL_AND_TRANSPARENT_RESPONSE.md`.
-- Safewill GCP requests must use the dedicated operations skill first:
-  `SAFEWILL_GCP_OPERATIONS.md`.
 
 **Process meta**
 - This file: `RULE_CONFLICT_RESOLUTION.md`.
@@ -139,10 +137,16 @@ local patterns. The right answer depends on whether the local pattern is an
 intentional convention or accumulated drift.
 
 **`DEVELOPMENT_PROCESS.md` vs `COMMIT_DISCIPLINE.md`**
-Phase-boundary rules and auto-commit batching rules can conflict when a
-coherent logical change spans what the phase boundary would consider
-separate concerns. Escalate rather than deciding unilaterally which
-boundary takes precedence.
+The approved merge unit defines the scope of one task branch, pull request,
+and its commits; commit batching must not cross merge-unit boundaries. If the
+plan's merge-unit boundary is unclear or no longer fits, stop and update and
+re-approve the plan before proceeding. A conflict between post-merge remote
+branch cleanup and auto-push is resolved as follows: pushing completed
+merge-unit commits is the default after checks pass, but deleting a remote
+branch is optional and always requires explicit, per-branch user approval
+immediately before deletion. Without approval, leave the remote branch in
+place; see `DEVELOPMENT_PROCESS.md` and `COMMIT_DISCIPLINE.md` for the
+operative rules.
 
 **`PLANNING.md` vs `FACTUAL_AND_TRANSPARENT_RESPONSE.md`**
 A plan may describe expected behaviour the agent cannot verify without
