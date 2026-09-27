@@ -72,7 +72,7 @@ chore(indexer): snapshot partial progress on ingestion refactor [wip]
 NO-TICKET
 ```
 
-WIP commits must be rebased, squashed, or removed before the phase branch
+WIP commits must be rebased, squashed, or removed before the merge-unit branch
 is merged, per `DEVELOPMENT_PROCESS.md`.
 
 ### Enforcement
@@ -92,14 +92,13 @@ committing work automatically — but only when it makes sense.
 ### When auto-commit is allowed
 Auto-commit is allowed when ALL of these are true:
 - The working directory is inside a git repo (`git rev-parse --is-inside-work-tree`).
-- The current branch is a phase branch that matches the active plan phase,
-  per the branch naming convention in `DEVELOPMENT_PROCESS.md` (format:
-  `plan/<short-plan-name>/phase-<n>-<short-phase-name>`). Any other branch
-  (the canonical branch, another plan's phase branch, an unrecognised
-  branch) must not be auto-committed to; ask before committing.
+- The current branch is the task branch for exactly one active, approved
+  merge unit and matches its plan, phase, and merge-unit ID, per
+  `DEVELOPMENT_PROCESS.md`. The canonical branch, a branch for another merge
+  unit, or an unrecognised branch must not be auto-committed to; ask before
+  committing.
 - Changes are non-destructive (no mass deletions, no sweeping refactors).
-- The changes are coherent (one idea / one fix / one feature) and stay
-  within the phase scope defined in the plan.
+- The changes stay within the active merge-unit scope defined in the plan.
 - No secrets were introduced (see secrets section in `SECURITY_BY_DEFAULT.md`).
 
 ### When NOT to auto-commit
@@ -114,7 +113,7 @@ Do NOT auto-commit if any of these are true:
     TDD cycle (use the `[tdd-red]` marker), and it must be followed by a
     green commit in the same session.
 - The change touches production infra or security-sensitive code (ask first).
-- The change mixes unrelated concerns into the phase branch.
+- The change mixes work from another merge unit into this task branch.
 - The change includes secrets or looks like credentials (stop and fix
   immediately).
 
@@ -136,7 +135,7 @@ commit them only when:
 ### What to do before committing
 Before committing, the agent MUST:
 1. Run `git branch --show-current` and confirm the branch name matches the
-   active plan phase before proceeding. If it does not match, stop and ask.
+   active merge unit before proceeding. If it does not match, stop and ask.
 2. Review `git status` and `git diff` to confirm the commit is coherent.
 3. Run the repo's fast checks if available (prefer the cheapest one):
    - `make test` / `make lint` / `npm test` / `pytest -q` / etc.
@@ -144,9 +143,20 @@ Before committing, the agent MUST:
 4. Ensure no secrets are present (scan the diff for tokens/keys).
 
 ### Auto-push policy
-- The agent may commit locally without asking.
-- The agent must ASK before pushing to any remote, unless the user explicitly
-  enabled auto-push in this repo.
+- After the commit preconditions and required checks pass, the agent MUST push
+  completed commits to the task branch's configured remote by default. Do not
+  leave completed work only in the local repository unless the user asks for
+  local-only work.
+- Never push commits directly to a canonical or protected branch. If the task
+  branch has no upstream, push that task branch to `origin` and set its
+  upstream. If the remote or target branch is ambiguous, ask before pushing.
+- Do not force-push, rewrite remote history, or push changes that fail required
+  checks. If a push fails, report that the commit remains local; do not claim
+  the remote was updated.
+- Deleting a remote branch is a destructive action, not a routine push. It
+  always requires explicit, per-branch user approval immediately before the
+  deletion, even under this auto-push policy. Without approval, leave the
+  remote branch in place.
 
 ### Suggested workflow
 - If a task involves multiple small steps, commit at milestones:
