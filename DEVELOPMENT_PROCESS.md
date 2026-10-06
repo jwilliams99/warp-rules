@@ -80,7 +80,10 @@ Human approval must be explicit, not implied.
 
 ### Pull request rules
 - Every merge unit must be merged through exactly one pull request, and no pull request may contain more than one merge unit.
-- No task branch may be merged without review.
+- No task branch may be merged without a recorded review. A reviewer must be
+  independent unless the repository has explicitly adopted author self-review
+  mode as defined in `SECURITY_BY_DEFAULT.md` and recorded it in `AGENTS.md` and
+  `README.md`.
 - Every pull request must be scoped to one phase and identify its merge-unit ID.
 - PR titles should identify the plan, phase, and merge unit clearly.
 - Recommended PR title format:
@@ -118,6 +121,12 @@ Human approval must be explicit, not implied.
 - New TODO / FIXME comments link to tickets: yes / no / n-a
 - Docs / README / docstrings updated: yes / no / n-a
 - Complexity, file-size, and coverage budgets respected: yes / no / n-a
+
+## Review
+- Review mode: independent reviewer / author self-review (the latter only when
+  the repository has explicitly adopted the mode in `AGENTS.md` and `README.md`)
+- For author self-review: record the author, checklist completed, and any
+  accepted findings; do not imply a third party reviewed the change.
 
 ## Gates
 Two-part gate: first that the Pre-implementation gates were filled in the
@@ -182,6 +191,8 @@ marked n/a must state why.
   size budgets, coverage delta non-negative.
 - Prior-art and reuse check from the plan is satisfied; no new duplicate
   abstractions introduced (see `CENTRALISED_BUSINESS_LOGIC.md`).
+- Review is recorded under the repository's approved review mode; author
+  self-review, where enabled, includes a completed attestation in the PR.
 - Alignment with the surrounding codebase verified, per
   `CODEBASE_ALIGNMENT_POLICY.md`.
 - Documentation updated where required (README, API docs, docstrings, ADR or
