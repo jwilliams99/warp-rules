@@ -1,6 +1,16 @@
 ## Code review rules
 
 This rule covers code-review concerns that are specific to reviewing a change in flight. Topics that are owned by other rules are linked below rather than restated, to keep a single source of truth.
+
+### Review mode
+- Independent review is the default.
+- In a repository that has explicitly adopted author self-review mode under
+  `SECURITY_BY_DEFAULT.md`, the author may complete and record their own review.
+  All correctness, access-boundary, data-integrity, and security checks in this
+  file still apply; self-review does not waive blockers or required CI gates.
+- A self-review attestation must identify the author, state that the author
+  reviewed the full diff against the plan, and record validation and any accepted
+  findings. It must never claim independent review.
 ### Canonical rules this rule defers to
 - Security and access control (including secrets handling): see `SECURITY_BY_DEFAULT.md`.
 - Test coverage and TDD expectations: see `TEST_DRIVEN_DEVELOPMENT.md`.
