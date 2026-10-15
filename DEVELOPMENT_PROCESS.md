@@ -78,6 +78,18 @@ Human approval must be explicit, not implied.
   - do not mark the merge unit complete until its pull request is merged and acceptance criteria are verified
 - Mark the phase complete only after all of its merge units are complete.
 
+### User-facing progress updates
+- For work expected to take more than 15 minutes, provide a concise progress
+  update at least every 15 minutes and at material milestones, decisions, or
+  blockers.
+- Each update states the current objective/status, work completed since the last
+  update, validation and results (including skipped tests and advisory findings),
+  blockers or risks, and the next step or required user action.
+- Distinguish implemented, planned, and in-progress capabilities. Report local
+  checks separately from remote CI; never imply an unobserved result.
+- Keep updates focused; omit unchanged background unless it affects the current
+  decision or risk.
+
 ### Pull request rules
 - Every merge unit must be merged through exactly one pull request, and no pull request may contain more than one merge unit.
 - No task branch may be merged without review.
