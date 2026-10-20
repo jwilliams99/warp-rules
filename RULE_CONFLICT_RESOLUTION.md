@@ -154,6 +154,13 @@ reading source files. Proceeding on plan-derived assumptions without
 reading the implementation violates `FACTUAL_AND_TRANSPARENT_RESPONSE.md`.
 Stop, state what needs to be verified, and ask before proceeding.
 
+**`SECURITY_BY_DEFAULT.md` CODEOWNERS review vs repository owner self-review**
+Independent CODEOWNERS review remains the default. A repository can use author
+self-review only after explicit human approval and documentation in its own
+`AGENTS.md` and `README.md`, per `SECURITY_BY_DEFAULT.md`. Do not infer this
+mode from a missing reviewer, an unavailable runner, or an owner's request to
+merge a particular PR; confirm the policy and record it before proceeding.
+
 ### Relationship to other rules
 - This rule defines the process for resolving conflicts; it does not itself
   adjudicate between rules.

@@ -34,7 +34,7 @@ Gates apply at every stage of the lifecycle. Specific tools per stack are listed
 ◦  SAST.
 ◦  Dependency vulnerability scan.
 ◦  IaC / container scans where applicable.
-◦  Required-reviewer rules via CODEOWNERS on security-relevant paths (auth, authz, IaC, migrations touching sensitive tables, new external endpoints).
+◦  Required-reviewer rules via CODEOWNERS on security-relevant paths (auth, authz, IaC, migrations touching sensitive tables, new external endpoints), except in a repository that has explicitly adopted the author self-review mode below.
 •  Pre-merge:
 ◦  Authorisation-path tests pass (see "Security tests" below).
 ◦  Threat model delta reconciled if the PR's "Security" section indicates a security-relevant surface was touched.
@@ -46,6 +46,31 @@ Gates apply at every stage of the lifecycle. Specific tools per stack are listed
 ◦  DAST or runtime scanning where applicable.
 ◦  Dependency drift monitoring (automated updates for CVEs; SLA: critical within 72 hours).
 ◦  Audit log review for the first operational window of any new surface.
+
+### Repository-level author self-review mode
+
+Independent CODEOWNERS review is the default for security-relevant pull
+requests. A repository may permanently opt into author self-review only when
+the repository owner explicitly approves the policy and records it in the
+repository's `AGENTS.md` and `README.md`.
+
+In an opted-in repository:
+- A pull request author may perform and record their own review; approval by a
+  third party is not required.
+- The `CODEOWNERS` file may remain as ownership metadata or optional routing,
+  but CODEOWNERS approval must not be a merge requirement.
+- Branch protection must not require independent approvals or block merge on
+  outstanding official review requests.
+- The author must complete the review checks in the pull request: threat-model
+  delta, least-privilege review where applicable, negative security tests,
+  migration and data-integrity checks, and all configured CI gates or documented
+  exceptions.
+- This mode does not waive tests, secrets handling, threat-model updates, CI
+  gates, or the prohibition on merging known blockers.
+
+This is a security-posture change, not a workaround for a temporarily
+unavailable reviewer. Record the owner and rationale in the repository README;
+the repository owner is accountable for every self-reviewed security change.
 
 Mandatory controls
 
